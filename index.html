@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lions Gate Fans Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.151.3/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#d4291c',
+                            dark: '#a11f15',
+                            light: '#f04a3e'
+                        },
+                        secondary: {
+                            DEFAULT: '#1c1c1c',
+                            dark: '#0a0a0a',
+                            light: '#2e2e2e'
+                        },
+                        gold: {
+                            DEFAULT: '#ffc107',
+                            dark: '#cc9a06',
+                            light: '#ffcd38'
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'spin-slow': 'spin 8s linear infinite',
+                        'bounce-slow': 'bounce 3s infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite',
+                        'celebration': 'celebration 4s ease-in-out infinite',
+                        'sparkle': 'sparkle 2s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        glow: {
+                            '0%, 100%': { boxShadow: '0 0 10px 5px rgba(255, 193, 7, 0.3)' },
+                            '50%': { boxShadow: '0 0 20px 10px rgba(255, 193, 7, 0.6)' },
+                        },
+                        celebration: {
+                            '0%, 100%': { transform: 'scale(1) rotate(0deg)' },
+                            '25%': { transform: 'scale(1.05) rotate(-2deg)' },
+                            '50%': { transform: 'scale(1.1) rotate(2deg)' },
+                            '75%': { transform: 'scale(1.05) rotate(-1deg)' },
+                        },
+                        sparkle: {
+                            '0%, 100%': { opacity: '0', transform: 'scale(0)' },
+                            '50%': { opacity: '1', transform: 'scale(1)' },
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #d4291c;
+            --primary-dark: #a11f15;
+            --primary-light: #f04a3e;
+            --secondary: #1c1c1c;
+            --gold: #ffc107;
+            --gold-dark: #cc9a06;
+            --gold-light: #ffcd38;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .dark {
+            --primary: #f04a3e;
+            --primary-dark: #d4291c;
+            --primary-light: #ff6b60;
+            --secondary: #2e2e2e;
+            --gold: #ffcd38;
+            --gold-dark: #ffc107;
+            --gold-light: #ffe082;
+        }
+        
+        #scene-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.4;
+        }
+        
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dark .glassmorphism {
+            background: rgba(30, 30, 30, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .progress-ring {
+            position: relative;
+        }
+        
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.5s ease;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        
+        .stars-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .star {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(to bottom right, var(--gold-light), var(--gold-dark));
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            position: relative;
+            margin-right: 4px;
+        }
+        
+        .star.half::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            background-color: #e0e0e0;
+            clip-path: polygon(0% 0%, 0% 100%, 100% 100%, 100% 0%);
+        }
+        
+        .dark .star.half::before {
+            background-color: #2e2e2e;
+        }
+        
+        .vip-badge {
+            position: relative;
+            background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+            padding: 8px 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(204, 154, 6, 0.3);
+            overflow: hidden;
+        }
+        
+        .vip-badge::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.3) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+        
+        .modal {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .profile-photo {
+            position: relative;
+            overflow: hidden;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--gold));
+            padding: 3px;
+        }
+        
+        .profile-photo img {
+            border-radius: 50%;
+            border: 2px solid white;
+            object-fit: cover;
+        }
+        
+        .ribbon {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 5px 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            transform: rotate(45deg) translate(20%, -120%);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        
+        .activity-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .activity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .portal-enter-btn {
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .portal-enter-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+            z-index: -1;
+        }
+        
+        .portal-enter-btn:hover::after {
+            left: 100%;
+        }
+        
+        /* Dark mode transitions */
+        .dark-transition {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Celebration popup styles */
+        .celebration-popup {
+            background: linear-gradient(135deg, var(--primary), var(--gold));
+            animation: celebration 4s ease-in-out infinite;
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, var(--gold-light), transparent);
+            border-radius: 50%;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        .voice-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(212, 41, 28, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            font-size: 12px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .voice-indicator.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .voice-wave {
+            display: inline-block;
+            width: 4px;
+            height: 10px;
+            background: white;
+            margin: 0 1px;
+            border-radius: 2px;
+            animation: voice-wave 0.6s ease-in-out infinite alternate;
+        }
+
+        .voice-wave:nth-child(2) { animation-delay: 0.1s; }
+        .voice-wave:nth-child(3) { animation-delay: 0.2s; }
+        .voice-wave:nth-child(4) { animation-delay: 0.3s; }
+
+        @keyframes voice-wave {
+            0% { height: 10px; }
+            100% { height: 4px; }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-100 dark:bg-gray-900 dark-transition">
+    <!-- Three.js Background Container -->
+    <div id="scene-container"></div>
+    
+    <!-- Voice Indicator -->
+    <div id="voice-indicator" class="voice-indicator">
+        <span class="voice-wave"></span>
+        <span class="voice-wave"></span>
+        <span class="voice-wave"></span>
+        <span class="voice-wave"></span>
+        <span id="voice-text" style="margin-left: 10px;">Speaking...</span>
+    </div>
+
+    <!-- Celebration Popup -->
+    <div id="celebration-popup" class="modal fixed inset-0 flex items-center justify-center z-50 p-4">
+        <div class="absolute inset-0 bg-black bg-opacity-70" id="celebration-overlay"></div>
+        <div class="celebration-popup rounded-xl shadow-2xl max-w-lg w-full mx-auto z-10 transform transition-all duration-500 scale-95 opacity-0 p-8 text-center text-white relative overflow-hidden" id="celebration-content">
+            <!-- Close Button -->
+            <button id="close-celebration-btn" class="absolute top-4 right-4 text-white hover:text-gray-300 focus:outline-none z-20 bg-black bg-opacity-30 rounded-full p-2 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            
+            <!-- Sparkles -->
+            <div class="sparkle" style="top: 10%; left: 15%; animation-delay: 0s;"></div>
+            <div class="sparkle" style="top: 20%; right: 20%; animation-delay: 0.5s;"></div>
+            <div class="sparkle" style="bottom: 30%; left: 25%; animation-delay: 1s;"></div>
+            <div class="sparkle" style="bottom: 15%; right: 15%; animation-delay: 1.5s;"></div>
+            <div class="sparkle" style="top: 60%; left: 10%; animation-delay: 2s;"></div>
+            <div class="sparkle" style="top: 40%; right: 10%; animation-delay: 2.5s;"></div>
+            
+            <div class="relative z-10">
+                <div class="mb-6">
+                    <div class="w-24 h-24 mx-auto mb-4 bg-white rounded-full flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gold" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold mb-2">🎉 Congratulations Joan! 🎉</h2>
+                    <p class="text-lg mb-4">You're among the TOP 3 most dedicated fans!</p>
+                </div>
+                
+                <div class="bg-white bg-opacity-20 rounded-lg p-4 mb-6">
+                    <h3 class="text-xl font-semibold mb-2">🏆 Your Amazing Journey:</h3>
+                    <ul class="text-left space-y-2">
+                        <li>✨ VIP Double Star Status Achieved</li>
+                        <li>🎯 6,000 Fan Points Earned</li>
+                        <li>🏅 #3 Most Dedicated Fan Ranking</li>
+                        <li>⭐ 99% Profile Completion</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-gold bg-opacity-30 rounded-lg p-4 mb-6">
+                    <h3 class="text-lg font-bold mb-2">🎊 Unlock Your DISTINGUISHED MEMBER OF HONOR Badge!</h3>
+                    <p class="text-sm">Complete your account re-validation to unlock exclusive benefits, Disney Land experiences, red carpet access, and lifetime VIP status!</p>
+                </div>
+                
+                <button id="celebration-continue" class="bg-white text-primary font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-colors">
+                    Continue Your Journey!
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Welcome Portal (Initial Screen) -->
+    <div id="welcome-portal" class="fixed inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-black via-primary-dark to-black z-50 text-white p-4">
+        <div class="relative w-48 h-48 mb-8">
+            <div id="logo-container" class="w-full h-full"></div>
+        </div>
+        <h1 class="text-4xl md:text-5xl font-bold mb-2 text-center animate-pulse-slow">Welcome Joan Luiser</h1>
+        <p class="text-xl md:text-2xl mb-8 text-center">Shine Like a Star with Lions Gate!</p>
+        <button id="enter-portal-btn" class="portal-enter-btn bg-primary hover:bg-primary-dark text-white font-bold py-3 px-8 rounded-full transition-all duration-300 text-lg shadow-lg hover:shadow-xl transform hover:scale-105">
+            Enter Portal
+        </button>
+    </div>
+    
+    <!-- Main Dashboard (Hidden initially) -->
+    <div id="main-dashboard" class="hidden min-h-screen">
+        <!-- Header -->
+        <header class="bg-white dark:bg-secondary shadow-md sticky top-0 z-40 dark-transition">
+            <div class="container mx-auto px-4 py-3">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center">
+                        <div id="small-logo-container" class="w-10 h-10 mr-3"></div>
+                        <h1 class="text-xl font-bold text-primary dark:text-primary-light">Lions Gate Fans Portal</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button id="notifications-btn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                            </svg>
+                        </button>
+                        <button id="dark-mode-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                            </svg>
+                        </button>
+                        <div class="relative">
+                            <button id="profile-menu-btn" class="flex items-center space-x-2 focus:outline-none">
+                                <div class="profile-photo w-8 h-8">
+                                    <img src="https://pfst.cf2.poecdn.net/base/image/79a9e1287584e80e373ea1a79482547e0afea7f419240caff0c6e4f86ec4d572?w=1358&h=1428" alt="Joan Luiser" class="w-full h-full object-cover">
+                                </div>
+                                <span class="hidden md:block text-sm font-semibold text-gray-700 dark:text-gray-200">Joan L.</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-8">
+            <!-- Profile Section -->
+            <section class="mb-12">
+                <div class="glassmorphism rounded-xl p-6 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+                    <div class="md:col-span-1 flex flex-col items-center">
+                        <div class="profile-photo w-40 h-40 mb-4 relative">
+                            <img src="https://pfst.cf2.poecdn.net/base/image/79a9e1287584e80e373ea1a79482547e0afea7f419240caff0c6e4f86ec4d572?w=1358&h=1428" alt="Joan Luiser" class="w-full h-full object-cover">
+                            <div class="ribbon">Most Dedicated Fan</div>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-1">Joan Luiser</h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Member ID: LG-7435-VIP</p>
+                        <div class="vip-badge text-xs font-bold text-black mb-4 animate-glow">
+                            VIP DOUBLE STAR
+                        </div>
+                        <div class="flex space-x-1 mb-2">
+                            <div class="star"></div>
+                            <div class="star"></div>
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">#3 Most Dedicated Fan of the Year</p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Membership Status</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div class="bg-white dark:bg-secondary-light rounded-lg p-4 shadow-sm dark-transition">
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Status</span>
+                                    <span class="text-sm font-semibold text-green-500">Active Member</span>
+                                </div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Level</span>
+                                    <span class="text-sm font-semibold text-gold-dark">VIP Double Star</span>
+                                </div>
+                                <div class="flex justify-between mb-4">
+                                    <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Rank</span>
+                                    <span class="text-sm font-semibold text-primary-dark dark:text-primary-light">#3 Most Dedicated</span>
+                                </div>
+                                <div class="mb-1">
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Profile Completion</span>
+                                        <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">99%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                        <div class="bg-primary dark:bg-primary-light h-2 rounded-full" style="width: 99%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white dark:bg-secondary-light rounded-lg p-4 shadow-sm dark-transition">
+                                <div class="flex items-center justify-between mb-6">
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Fan Points</p>
+                                        <p class="text-2xl font-bold text-gray-800 dark:text-white">6,000</p>
+                                    </div>
+                                    <div class="relative w-16 h-16">
+                                        <svg class="w-full h-full" viewBox="0 0 36 36">
+                                            <circle cx="18" cy="18" r="16" fill="none" stroke="#f3f4f6" stroke-width="2" class="dark:stroke-gray-700"></circle>
+                                            <circle cx="18" cy="18" r="16" fill="none" stroke="url(#gradient)" stroke-width="2" stroke-dasharray="100" stroke-dashoffset="1" class="progress-ring__circle"></circle>
+                                            <defs>
+                                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                    <stop offset="0%" stop-color="#d4291c" />
+                                                    <stop offset="100%" stop-color="#ffc107" />
+                                                </linearGradient>
+                                            </defs>
+                                        </svg>
+                                        <div class="absolute inset-0 flex items-center justify-center">
+                                            <span class="text-xs font-bold text-gray-700 dark:text-gray-300">99%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <div class="flex items-center">
+                                        <div class="w-3 h-3 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                                        <span class="ml-1 text-xs text-gray-500 dark:text-gray-400">Bronze</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="w-3 h-3 rounded-full bg-blue-400 dark:bg-blue-600"></div>
+                                        <span class="ml-1 text-xs text-gray-500 dark:text-gray-400">Silver</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="w-3 h-3 rounded-full bg-gold"></div>
+                                        <span class="ml-1 text-xs text-gray-500 dark:text-gray-400">Gold</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="w-3 h-3 rounded-full bg-purple-500"></div>
+                                        <span class="ml-1 text-xs text-gray-500 dark:text-gray-400">Diamond</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Fans & Statistics Section -->
+            <section class="mb-12">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Fans & Statistics</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2">
+                        <div class="glassmorphism rounded-xl p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Fan Growth Chart</h3>
+                                <div class="text-sm font-medium text-primary dark:text-primary-light">
+                                    <span class="mr-2">Total Followers:</span>
+                                    <span class="font-bold">12,439</span>
+                                </div>
+                            </div>
+                            <div class="h-60">
+                                <canvas id="fanGrowthChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-1">
+                        <div class="glassmorphism rounded-xl p-6 h-full">
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Fan Engagement</h3>
+                            <div class="flex items-center mb-4">
+                                <div class="text-gold mr-2">
+                                    <div class="flex">
+                                        <div class="star"></div>
+                                        <div class="star"></div>
+                                        <div class="star"></div>
+                                        <div class="star"></div>
+                                        <div class="star half"></div>
+                                    </div>
+                                </div>
+                                <span class="text-sm font-medium text-gray-600 dark:text-gray-300">4.8/5 by Lions Gate moderators</span>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="bg-white dark:bg-secondary-light rounded-lg p-3 text-sm dark-transition">
+                                    <div class="flex justify-between mb-1">
+                                        <span class="font-semibold text-gray-800 dark:text-white">Weekly Activity Score</span>
+                                        <span class="text-primary dark:text-primary-light font-bold">92/100</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                                        <div class="bg-primary dark:bg-primary-light h-1.5 rounded-full" style="width: 92%"></div>
+                                    </div>
+                                </div>
+                                <div class="bg-white dark:bg-secondary-light rounded-lg p-3 text-sm dark-transition">
+                                    <div class="flex justify-between mb-1">
+                                        <span class="font-semibold text-gray-800 dark:text-white">Event Participations</span>
+                                        <span class="text-primary dark:text-primary-light font-bold">18/20</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                                        <div class="bg-primary dark:bg-primary-light h-1.5 rounded-full" style="width: 90%"></div>
+                                    </div>
+                                </div>
+                                <div class="bg-white dark:bg-secondary-light rounded-lg p-3 text-sm dark-transition">
+                                    <div class="flex justify-between mb-1">
+                                        <span class="font-semibold text-gray-800 dark:text-white">Fan of the Week Awards</span>
+                                        <span class="text-primary dark:text-primary-light font-bold">3 times</span>
+                                    </div>
+                                    <div class="flex space-x-1">
+                                        <div class="w-4 h-4">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-gold">
+                                                <path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3c0-2.9-2.35-5.25-5.25-5.25Zm3.75 8.25v-3a3.75 3.75 0 1 0-7.5 0v3h7.5Z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">Last awarded: 2 weeks ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Ratings from Team Section -->
+            <section class="mb-12">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Ratings from Lions Gate Team</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glassmorphism rounded-xl p-6 activity-card">
+                        <div class="flex items-start mb-4">
+                            <div class="profile-photo w-12 h-12 mr-4">
+                                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48c3R5bGU+LmNscC0xe2NsaXAtcnVsZTpldmVub2RkfS5oYWlye2ZpbGw6IzQyMjcwZX0uZmFjZXtmaWxsOiNmOGM5YWR9LmV5ZXN7ZmlsbDojMzQyNDE2fS5lYXJyaW5ne2ZpbGw6I2YwNTY5Nn0uY2xvdGhlc3tmaWxsOiMzMjc1YTh9PC9zdHlsZT48Y2xpcFBhdGggaWQ9ImEiIGNsYXNzPSJjbHAtMSI+PHBhdGggZD0iTTAgMGgxMDB2MTAwSDB6Ii8+PC9jbGlwUGF0aD48L2RlZnM+PGcgY2xpcC1wYXRoPSJ1cmwoI2EpIj48cGF0aCBmaWxsPSIjZmJmYWY1IiBkPSJNMCAwaDEwMHYxMDBIMHoiLz48cGF0aCBkPSJNNTAgOTRjMTYgMCAyOS0xMyAyOS0yOVY0NWMwLTE2LTEzLTI5LTI5LTI5UzIxIDI5IDIxIDQ1djIwYzAgMTYgMTMgMjkgMjkgMjl6IiBjbGFzcz0iaGFpciIvPjxwYXRoIGQ9Ik0zNyA3OGMyIDQgNyA3IDEzIDdzMTEtMyAxMy03di01SDM3djV6IiBjbGFzcz0iZmFjZSIvPjxwYXRoIGQ9Ik0zNyA3M2g0djVoLTRWNzN6bTE4IDBoNHY1aC00Vjczem0tMTUtMjBjMC0xIDEtMiAyLTJzMiAxIDIgMi0xIDItMiAyLTItMS0yLTJ6bTE0IDBjMC0xIDEtMiAyLTJzMiAxIDIgMi0xIDItMiAyLTItMS0yLTJ6IiBjbGFzcz0iZXllcyIvPjxwYXRoIGQ9Ik0zNSA1OGMyIDAgNC0yIDQtNHMtMi00LTQtNC00IDItNCA0IDIgNCA0IDR6bTMwIDBjMiAwIDQtMiA0LTRzLTItNC00LTQtNCAyLTQgNCAyIDQgNCA0eiIgY2xhc3M9ImVhcnJpbmciLz48cGF0aCBkPSJNNTAgOTVjLTE3IDAtMzEtMTQtMzEtMzFWNDRjMCAxNyAxNCAzMSAzMSAzMXMzMS0xNCAzMS0zMXYyMGMwIDE3LTE0IDMxLTMxIDMxeiIgY2xhc3M9ImNsb3RoZXMiLz48L2c+PC9zdmc+" alt="Sarah M." class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 dark:text-white">Sarah M.</h4>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">PR Lead</p>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-white dark:bg-secondary-light rounded-lg shadow-sm dark-transition">
+                            <p class="text-gray-700 dark:text-gray-300 italic">"Joan shows incredible dedication at every event! Her enthusiasm is contagious and she's always the first to volunteer for our promotional activities."</p>
+                        </div>
+                        <div class="mt-3 flex justify-between items-center">
+                            <div class="text-gold">
+                                <div class="flex">
+                                    <div class="star"></div>
+                                    <div class="star"></div>
+                                    <div class="star"></div>
+                                    <div class="star"></div>
+                                    <div class="star"></div>
+                                </div>
+                            </div>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">2 days ago</span>
+                        </div>
+                    </div>
+                    <div class="glassmorphism rounded-xl p-6 activity-card">
+                        <div class="flex items-start mb-4">
+                            <div class="profile-photo w-12 h-12 mr-4">
+                                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48c3R5bGU+LmNscC0xe2NsaXAtcnVsZTpldmVub2RkfS5oYWlye2ZpbGw6IzFhMWExYX0uZmFjZXtmaWxsOiNkMTlhODV9LmV5ZXN7ZmlsbDojNDEyYTE3fS5iZWFyZHtmaWxsOiM1YTNlMmF9LmNsb3RoZXN7ZmlsbDojMmQ0ZDZkfTwvc3R5bGU+PGNsaXBQYXRoIGlkPSJhIiBjbGFzcz0iY2xwLTEiPjxwYXRoIGQ9Ik0wIDBoMTAwdjEwMEgweiIvPjwvY2xpcFBhdGg+PC9kZWZzPjxnIGNsaXAtcGF0aD0idXJsKCNhKSI+PHBhdGggZmlsbD0iI2ZiZmFmNSIgZD0iTTAgMGgxMDB2MTAwSDB6Ii8+PHBhdGggZD0iTTUwIDk1YzE3IDAgMzEtMTQgMzEtMzFWNDRjMC0xNy0xNC0zMS0zMS0zMVMyMCAyNyAyMCA0NHYyMGMwIDE3IDE0IDMxIDMwIDMxeiIgY2xhc3M9ImhhaXIiLz48cGF0aCBkPSJNMzYgNzhjMiA0IDcgNiAxNCAxMXM2LTYgMTQtMTF2LTVIMzZ2NXoiIGNsYXNzPSJmYWNlIi8+PHBhdGggZD0iTTM2IDczaDR2NWgtNFY3M3ptMjAgMGg0djVoLTRWNzN6bS0xNy0yMGMwLTEgMS0yIDItMnMyIDEgMiAyLTEgMi0yIDItMi0xLTItMnptMTQgMGMwLTEgMS0yIDItMnMyIDEgMiAyLTEgMi0yIDItMi0xLTItMnoiIGNsYXNzPSJleWVzIi8+PHBhdGggZD0iTTM1IDczaDNsMSA0aC0zbC0xLTR6bTIzIDBsLTEgNGgzdjRoLTN2LTh6IiBjbGFzcz0iYmVhcmQiLz48cGF0aCBkPSJNNTAgOTVjLTE3IDAtMzEtMTQtMzEtMzFWNDRjMCAxNyAxNCAzMSAzMSAzMXMzMS0xNCAzMS0zMXYyMGMwIDE3LTE0IDMxLTMxIDMxeiIgY2xhc3M9ImNsb3RoZXMiLz48L2c+PC9zdmc+" alt="Marcus B." class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 dark:text-white">Marcus B.</h4>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Event Director</p>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-white dark:bg-secondary-light rounded-lg shadow-sm dark-transition">
+                            <p class="text-gray-700 dark:text-gray-300 italic">"
