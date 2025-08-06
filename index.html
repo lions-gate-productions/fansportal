@@ -3,15 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Lions Gate VIP Portal - Exclusive access for members">
     <title>Lions Gate VIP Portal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <!-- Remove cdn.tailwindcss.com for production -->
+    <link rel="stylesheet" href="/styles/tailwind.min.css"> <!-- Use local minified Tailwind CSS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" relSave rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --gold: #FFD700;
+            --gold-dark: #E6C200;
+            --blue-dark: #1E3A8A;
+            --purple-dark: #6B21A8;
+        }
+
         * { -webkit-tap-highlight-color: transparent; user-select: none; }
         input, textarea { user-select: text; }
         html { scroll-behavior: smooth; }
@@ -50,12 +59,12 @@
             width: 100%;
             height: 100%;
             z-index: -2;
-            opacity: 0.3;
+            opacity: 0.2; /* Reduced opacity for performance */
         }
         .glassmorphism { 
             background: rgba(255, 255, 255, 0.08); 
-            backdrop-filter: blur(20px); 
-            -webkit-backdrop-filter: blur(20px); 
+            backdrop-filter: blur(15px); 
+            -webkit-backdrop-filter: blur(15px); 
             border: 1px solid rgba(255, 255, 255, 0.15); 
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             transition: all 0.3s ease;
@@ -89,7 +98,7 @@
         }
         .ticker-content { 
             display: inline-block; 
-            animation: ticker 120s linear infinite; 
+            animation: ticker 60s linear infinite; /* Reduced duration for better UX */
             padding-left: 100%; 
             font-size: 12px;
         }
@@ -122,10 +131,15 @@
             justify-content: center;
             min-height: 44px;
             transition: all 0.3s ease;
+            background: linear-gradient(45deg, var(--blue-dark), var(--purple-dark));
+            color: white;
+            font-weight: 700;
+            border-radius: 12px;
         }
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, var(--purple-dark), var(--blue-dark));
         }
         .loading-spinner { 
             display: inline-block; 
@@ -153,19 +167,19 @@
         }
         .impact-counter {
             font-size: 2rem;
-            font-weight: bold;
-            color: var(--gold-light);
+            font-weight: 900;
+            color: var(--gold);
             text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .voice-assistant {
             position: fixed;
-            bottom: 15px;
-            left: 15px;
+            bottom: 20px;
+            left: 20px;
             z-index: 100;
         }
         .voice-btn {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
             border: none;
@@ -187,13 +201,13 @@
         }
         .voice-status {
             position: absolute;
-            bottom: 60px;
+            bottom: 70px;
             left: 0;
             background: rgba(0, 0, 0, 0.8);
             color: white;
-            padding: 8px 12px;
+            padding: 10px 15px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 14px;
             white-space: nowrap;
             opacity: 0;
             transform: translateY(10px);
@@ -208,12 +222,32 @@
             background-size: 200% 200%;
             animation: hologram 6s ease-in-out infinite;
         }
+        .download-prompt {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            max-width: 300px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        .download-prompt.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
         @media (max-width: 768px) {
             .glassmorphism { padding: 1rem; margin: 0.5rem; }
-            .voice-assistant { bottom: 10px; left: 10px; }
-            .voice-btn { width: 45px; height: 45px; }
+            .voice-assistant { bottom: 15px; left: 15px; }
+            .voice-btn { width: 50px; height: 50px; }
             .modal-content { margin: 1rem; max-height: 90vh; overflow-y: auto; }
             .impact-counter { font-size: 1.5rem; }
+            .download-prompt { max-width: 90%; }
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
@@ -226,7 +260,7 @@
 </head>
 <body class="min-h-screen">
     <!-- 3D Background Canvas -->
-    <canvas id="three-canvas"></canvas>
+    <canvas id="three-canvas" aria-hidden="true"></canvas>
 
     <!-- Floating Particles -->
     <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
@@ -234,19 +268,24 @@
     <div class="particle" style="left: 30%; animation-delay: 2s;"></div>
     <div class="particle" style="left: 40%; animation-delay: 3s;"></div>
     <div class="particle" style="left: 50%; animation-delay: 4s;"></div>
-    <div class="particle" style="left: 60%; animation-delay: 5s;"></div>
-    <div class="particle" style="left: 70%; animation-delay: 6s;"></div>
-    <div class="particle" style="left: 80%; animation-delay: 7s;"></div>
-    <div class="particle" style="left: 90%; animation-delay: 8s;"></div>
 
     <!-- Voice Assistant -->
-    <div class="voice-assistant">
+    <div class="voice-assistant" role="region" aria-label="Voice Assistant">
         <div class="voice-status" id="voice-status">Say "Hey Portal" to start</div>
-        <button class="voice-btn" id="voice-btn" title="Voice Assistant">
+        <button class="voice-btn" id="voice-btn" title="Voice Assistant" aria-label="Toggle Voice Assistant">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
             </svg>
         </button>
+    </div>
+
+    <!-- App Download Prompt -->
+    <div id="download-app-prompt" class="download-prompt">
+        <p class="text-white text-sm mb-3">Download the Lions Gate VIP App for a seamless experience!</p>
+        <div class="flex gap-2">
+            <button id="download-app-btn" class="btn-primary flex-1 text-sm py-2">Download Now</button>
+            <button id="dismiss-app-prompt" class="flex-1 bg-gray-600 text-white text-sm py-2 rounded-lg">Dismiss</button>
+        </div>
     </div>
 
     <!-- Loading Screen -->
@@ -259,7 +298,7 @@
     </div>
 
     <!-- News Ticker -->
-    <div id="news-ticker" class="news-ticker">
+    <div id="news-ticker" class="news-ticker" role="marquee" aria-live="polite">
         <div class="ticker-content" id="ticker-text"></div>
     </div>
 
@@ -268,7 +307,7 @@
             <div class="flex justify-between items-center">
                 <div class="flex items-center">
                     <div class="w-12 h-12 mr-3 rounded-full overflow-hidden border-2 border-gold animate-glow">
-                        <img src="https://pfst.cf2.poecdn.net/base/image/79a9e1287584e80e373ea1a79482547e0afea7f419240caff0c6e4f86ec4d572?w=1358&h=1428" alt="Joan Luiser" class="w-full h-full object-cover">
+                        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=1358&h=1428&fit=crop" alt="Joan Luiser" class="w-full h-full object-cover" loading="lazy">
                     </div>
                     <div>
                         <h1 class="text-lg font-bold text-white" data-app-value="memberName">Joan Luiser</h1>
@@ -291,7 +330,7 @@
             <nav class="bg-white/5 dark:bg-black/10 backdrop-blur-sm border-b border-white/10">
                 <div class="container mx-auto px-4">
                     <div class="flex space-x-2 md:space-x-6 overflow-x-auto">
-                        <button class="nav-btn py-3 px-3 md:px-4 text-white border-b-2 border-gold transition-all whitespace-nowrap text-sm md:text-base" data-page="dashboard">🏠 Dashboard</button>
+                        <button class="nav-btn py-3 px-3 md:px-4 text-white border-b-2 border-gold transition-all whitespace-nowrap text-sm md:text-base" data-page="dashboard" aria-current="page">🏠 Dashboard</button>
                         <button class="nav-btn py-3 px-3 md:px-4 text-white border-b-2 border-transparent hover:border-gold transition-all whitespace-nowrap text-sm md:text-base" data-page="security">🔒 Security</button>
                         <button class="nav-btn py-3 px-3 md:px-4 text-white border-b-2 border-transparent hover:border-gold transition-all whitespace-nowrap text-sm md:text-base" data-page="volunteer">❤️ Volunteer</button>
                     </div>
@@ -310,7 +349,7 @@
                                 <p class="text-yellow-300 font-semibold text-lg">Your VIP access expires in 6 days!</p>
                                 <p class="text-white/80 mt-1 text-sm md:text-base">Contact support to reactivate your account and restore all VIP benefits.</p>
                             </div>
-                            <button id="reactivate-now-btn" class="btn-primary bg-blue-600 hover:bg-blue-700 w-full md:w-auto px-6 md:px-8 py-3 rounded-xl text-lg font-semibold flex-shrink-0 animate-glow">Reactivate Now</button>
+                            <button id="reactivate-now-btn" class="btn-primary w-full md:w-auto px-6 md:px-8 py-3 rounded-xl text-lg font-semibold flex-shrink-0 animate-glow">Reactivate Now</button>
                         </div>
                     </section>
 
@@ -324,7 +363,7 @@
                                     <div class="relative w-24 h-24 md:w-32 md:h-32 mb-4">
                                         <div class="absolute inset-0 bg-gradient-to-r from-gold via-blue-600 to-gold rounded-full animate-rotate-slow opacity-30"></div>
                                         <div class="relative w-full h-full rounded-full overflow-hidden border-4 border-gold">
-                                            <img src="https://pfst.cf2.poecdn.net/base/image/79a9e1287584e80e373ea1a79482547e0afea7f419240caff0c6e4f86ec4d572?w=1358&h=1428" alt="Joan Luiser" class="w-full h-full object-cover">
+                                            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=1358&h=1428&fit=crop" alt="Joan Luiser" class="w-full h-full object-cover" loading="lazy">
                                         </div>
                                     </div>
                                     <h2 class="text-xl md:text-2xl font-bold text-white mb-2" data-app-value="memberName">Joan Luiser</h2>
@@ -354,7 +393,7 @@
                                         </div>
                                         <div class="flex items-center space-x-3 md:space-x-4 mb-4 md:mb-5">
                                             <div class="w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-gold flex-shrink-0">
-                                                <img src="https://pfst.cf2.poecdn.net/base/image/79a9e1287584e80e373ea1a79482547e0afea7f419240caff0c6e4f86ec4d572?w=1358&h=1428" alt="Joan Luiser" class="w-full h-full object-cover">
+                                                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=1358&h=1428&fit=crop" alt="Joan Luiser" class="w-full h-full object-cover" loading="lazy">
                                             </div>
                                             <div>
                                                 <h3 class="font-bold text-base md:text-lg text-white" data-app-value="memberName">Joan Luiser</h3>
@@ -371,7 +410,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button id="download-card-btn" class="w-full mt-4 md:mt-6 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg shimmer-effect text-sm md:text-base btn-primary">Download VIP Card</button>
+                                <button id="download-card-btn" class="w-full mt-4 md:mt-6 btn-primary py-3 px-6 rounded-xl text-sm md:text-base font-semibold shimmer-effect">Download VIP Card</button>
                             </section>
                         </div>
 
@@ -425,7 +464,7 @@
                         <div class="glassmorphism rounded-xl p-4 md:p-6">
                             <h4 class="text-lg font-bold text-white mb-2">Report Suspicious Activity</h4>
                             <p class="text-white/80 text-sm mb-3">See something suspicious? Help keep our community safe by reporting it to our team.</p>
-                            <button id="report-fraud-btn" class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold py-2 px-4 rounded-lg min-h-[44px]">Report Now</button>
+                            <button id="report-fraud-btn" class="w-full btn-primary py-2 px-4 rounded-lg min-h-[44px]">Report Now</button>
                         </div>
                     </div>
                 </div>
@@ -441,19 +480,19 @@
                         <div class="glassmorphism rounded-xl p-6 md:p-8">
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
                                 <div>
-                                    <div class="impact-counter text-gold">45+</div>
+                                    <div class="impact-counter">45+</div>
                                     <p class="text-sm text-white/60">Orphanages Supported</p>
                                 </div>
                                 <div>
-                                    <div class="impact-counter text-gold">$2.8M</div>
+                                    <div class="impact-counter">$2.8M</div>
                                     <p class="text-sm text-white/60">Cancer Research Funding</p>
                                 </div>
                                 <div>
-                                    <div class="impact-counter text-gold">12,500+</div>
+                                    <div class="impact-counter">12,500+</div>
                                     <p class="text-sm text-white/60">Children Helped</p>
                                 </div>
                                 <div>
-                                    <div class="impact-counter text-gold">892</div>
+                                    <div class="impact-counter">892</div>
                                     <p class="text-sm text-white/60">Lives Saved</p>
                                 </div>
                             </div>
@@ -464,16 +503,16 @@
                         <h3 class="text-2xl font-bold text-white mb-6 text-center">🔬 Cancer Research Initiatives</h3>
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div class="volunteer-card rounded-xl p-6 relative">
-                                <img src="https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?w=500&h=300&fit=crop" alt="Pediatric Cancer Research" class="w-full h-48 object-cover rounded-lg mb-4">
+                                <img src="https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?w=500&h=300&fit=crop" alt="Pediatric Cancer Research" class="w-full h-48 object-cover rounded-lg mb-4" loading="lazy">
                                 <h4 class="text-xl font-bold text-white mb-2">👶 Pediatric Cancer Research</h4>
                                 <p class="text-white/80 text-sm mb-4">Groundbreaking research focused on childhood leukemia and brain tumors. Every donation directly funds clinical trials that save young lives.</p>
-                                <button id="donate-cancer-btn" class="w-full bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105">Support Research</button>
+                                <button id="donate-cancer-btn" class="w-full btn-primary py-3 px-4 rounded-lg transition-all transform hover:scale-105">Support Research</button>
                             </div>
                             <div class="volunteer-card rounded-xl p-6">
-                                <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=500&h=300&fit=crop" alt="Breast Cancer Research" class="w-full h-48 object-cover rounded-lg mb-4">
+                                <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=500&h=300&fit=crop" alt="Breast Cancer Research" class="w-full h-48 object-cover rounded-lg mb-4" loading="lazy">
                                 <h4 class="text-xl font-bold text-white mb-2">🎗️ Breast Cancer Innovation Lab</h4>
                                 <p class="text-white/80 text-sm mb-4">Advanced research into early detection methods and personalized treatment approaches for breast cancer patients worldwide.</p>
-                                <button id="donate-breast-cancer-btn" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105">Support Innovation</button>
+                                <button id="donate-breast-cancer-btn" class="w-full btn-primary py-3 px-4 rounded-lg transition-all transform hover:scale-105">Support Innovation</button>
                             </div>
                         </div>
                     </section>
@@ -482,16 +521,16 @@
                         <h3 class="text-2xl font-bold text-white mb-6 text-center">🏠 Orphanage Support Programs</h3>
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div class="volunteer-card rounded-xl p-6 relative">
-                                <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=500&h=300&fit=crop" alt="Sunshine Children's Home" class="w-full h-48 object-cover rounded-lg mb-4">
+                                <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=500&h=300&fit=crop" alt="Sunshine Children's Home" class="w-full h-48 object-cover rounded-lg mb-4" loading="lazy">
                                 <h4 class="text-xl font-bold text-white mb-2">🌟 Sunshine Children's Home (Kenya)</h4>
                                 <p class="text-white/80 text-sm mb-4">This home for 150 children needs educational supplies, nutritious meals, and recreational activities. Your help brings them joy and a future.</p>
-                                <button id="volunteer-orphanage-btn" class="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105">Join This Program</button>
+                                <button id="volunteer-orphanage-btn" class="w-full btn-primary py-3 px-4 rounded-lg transition-all transform hover:scale-105">Join This Program</button>
                             </div>
                             <div class="volunteer-card rounded-xl p-6">
-                                <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=500&h=300&fit=crop" alt="Hope Valley Orphanage" class="w-full h-48 object-cover rounded-lg mb-4">
+                                <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=500&h=300&fit=crop" alt="Hope Valley Orphanage" class="w-full h-48 object-cover rounded-lg mb-4" loading="lazy">
                                 <h4 class="text-xl font-bold text-white mb-2">🏡 Hope Valley Orphanage (Uganda)</h4>
                                 <p class="text-white/80 text-sm mb-4">A sanctuary for 85 children focusing on healthcare, education, and vocational training. Support their journey to self-sufficiency.</p>
-                                <button id="support-hope-valley-btn" class="w-full bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105">Support Hope Valley</button>
+                                <button id="support-hope-valley-btn" class="w-full btn-primary py-3 px-4 rounded-lg transition-all transform hover:scale-105">Support Hope Valley</button>
                             </div>
                         </div>
                     </section>
@@ -540,7 +579,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button data-close-modal class="w-full btn-primary py-3 px-6 rounded-xl text-lg font-semibold bg-gold hover:bg-gold-dark shimmer-effect">Explore the New Portal</button>
+                        <button data-close-modal class="w-full btn-primary py-3 px-6 rounded-xl text-lg font-semibold shimmer-effect">Explore the New Portal</button>
                     </div>
                 </div>
             </div>
@@ -570,7 +609,7 @@
                             </div>
                         </div>
                         <div class="flex flex-col sm:flex-row gap-3">
-                            <button id="reactivate-from-modal" class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 px-6 rounded-xl shimmer-effect min-h-[44px]">Reactivate Now</button>
+                            <button id="reactivate-from-modal" class="flex-1 btn-primary py-3 px-6 rounded-xl min-h-[44px]">Reactivate Now</button>
                             <button data-close-modal class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-xl min-h-[44px]">Later</button>
                         </div>
                     </div>
@@ -583,43 +622,44 @@
     </div>
 
     <script>
-        // Three.js 3D Background Animation
+        // Optimized Three.js 3D Background Animation
         function init3DBackground() {
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
             const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas'), alpha: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Optimize for high-DPI displays
 
             const particles = new THREE.Group();
-            const geometry = new THREE.SphereGeometry(0.1, 16, 16);
-            const material = new THREE.MeshBasicMaterial({ color: 0xffd700, transparent: true, opacity: 0.6 });
+            const geometry = new THREE.SphereGeometry(0.08, 12, 12); // Reduced complexity
+            const material = new THREE.MeshBasicMaterial({ color: 0xffd700, transparent: true, opacity: 0.5 });
 
-            for (let i = 0; i < 200; i++) {
+            for (let i = 0; i < 100; i++) { // Reduced particle count
                 const particle = new THREE.Mesh(geometry, material);
                 particle.position.set(
-                    (Math.random() - 0.5) * 100,
-                    (Math.random() - 0.5) * 100,
-                    (Math.random() - 0.5) * 100
+                    (Math.random() - 0.5) * 80,
+                    (Math.random() - 0.5) * 80,
+                    (Math.random() - 0.5) * 80
                 );
-                particle.userData = { velocity: new THREE.Vector3((Math.random() - 0.5) * 0.1, (Math.random() - 0.5) * 0.1, (Math.random() - 0.5) * 0.1) };
+                particle.userData = { velocity: new THREE.Vector3((Math.random() - 0.5) * 0.05, (Math.random() - 0.5) * 0.05, (Math.random() - 0.5) * 0.05) };
                 particles.add(particle);
             }
             scene.add(particles);
-            camera.position.z = 50;
+            camera.position.z = 40;
 
             function animate() {
                 requestAnimationFrame(animate);
                 particles.children.forEach(p => {
                     p.position.add(p.userData.velocity);
-                    if (p.position.distanceTo(new THREE.Vector3(0, 0, 0)) > 50) {
+                    if (p.position.distanceTo(new THREE.Vector3(0, 0, 0)) > 40) {
                         p.position.set(
-                            (Math.random() - 0.5) * 100,
-                            (Math.random() - 0.5) * 100,
-                            (Math.random() - 0.5) * 100
+                            (Math.random() - 0.5) * 80,
+                            (Math.random() - 0.5) * 80,
+                            (Math.random() - 0.5) * 80
                         );
                     }
                 });
-                particles.rotation.y += 0.002;
+                particles.rotation.y += 0.001;
                 renderer.render(scene, camera);
             }
             animate();
@@ -651,7 +691,10 @@
             }
 
             get(key) { return this.data[key]; }
-            set(key, value) { this.data[key] = value; this.updateUI(); }
+            set(key, value) { 
+                this.data[key] = value; 
+                this.updateUI(); 
+            }
 
             updateUI() {
                 document.querySelectorAll('[data-app-value]').forEach(el => {
@@ -666,7 +709,9 @@
                 this.speak(`Navigating to ${page}`);
             }
 
-            showHelp() { this.speak('Available commands: dashboard, security, volunteer, help, reactivate, contact support'); }
+            showHelp() { 
+                this.speak('Available commands: dashboard, security, volunteer, help, reactivate, contact support'); 
+            }
 
             reactivateAccount() {
                 document.getElementById('reactivate-now-btn')?.click();
@@ -683,11 +728,12 @@
                     const utterance = new SpeechSynthesisUtterance(text);
                     utterance.rate = 0.9;
                     utterance.pitch = 1.1;
+                    utterance.volume = 0.8;
                     speechSynthesis.speak(utterance);
                 }
             }
 
-            createMailtoLink(subject, body, recipient = 'support@lionsgatevip.com') {
+            createMailtoLink(subject, body, recipient = 'erwinstoff0766@gmail.com') {
                 const memberInfo = `\n\n---\nMember Name: ${this.get('memberName')}\nMember ID: ${this.get('memberId')}`;
                 const fullBody = encodeURIComponent(body + memberInfo);
                 const fullSubject = encodeURIComponent(subject);
@@ -728,14 +774,28 @@
                     this.recognition.interimResults = false;
                     this.recognition.lang = 'en-US';
 
-                    this.recognition.onstart = () => { this.isListening = true; this.updateUI('Listening...'); };
+                    this.recognition.onstart = () => { 
+                        this.isListening = true; 
+                        this.updateUI('Listening...'); 
+                    };
                     this.recognition.onresult = (event) => this.processCommand(event.results[0][0].transcript.toLowerCase());
-                    this.recognition.onerror = (e) => { this.isListening = false; if (e.error !== 'no-speech') this.updateUI('Voice error. Try again.'); };
-                    this.recognition.onend = () => { this.isListening = false; this.updateUI('Say "Hey Portal"'); };
+                    this.recognition.onerror = (e) => { 
+                        this.isListening = false; 
+                        if (e.error !== 'no-speech') this.updateUI('Voice error. Try again.'); 
+                    };
+                    this.recognition.onend = () => { 
+                        this.isListening = false; 
+                        this.updateUI('Say "Hey Portal"'); 
+                    };
 
                     document.getElementById('voice-btn')?.addEventListener('click', () => {
                         this.isListening ? this.recognition.stop() : this.recognition.start();
                     });
+
+                    // Narrate key features on page load
+                    if (speech_enabled) {
+                        this.appState.speak('Welcome to the Lions Gate VIP Portal, Joan Luiser! Explore your dashboard, download your VIP card, check security settings, or join our volunteer hub to support Keanu Reeves’ charitable initiatives.');
+                    }
                 } catch (e) {
                     console.error("Voice recognition failed to initialize:", e);
                     this.updateUI('Voice init failed');
@@ -751,7 +811,7 @@
                 } else if (command) {
                     this.appState.voiceCommands[command]();
                 } else {
-                    this.appState.speak('Sorry, I didn\'t understand. Say "help" for commands.');
+                    this.appState.speak('Sorry, I didn’t understand. Say "help" for commands.');
                 }
             }
 
@@ -802,21 +862,57 @@
             toast.innerHTML = `<div class="flex items-center justify-between"><p class="text-sm">${message}</p><button class="ml-3 text-white hover:text-gray-200" onclick="this.parentElement.parentElement.remove()">X</button></div>`;
             toastContainer.appendChild(toast);
             setTimeout(() => toast.classList.remove('translate-x-full'), 100);
-            setTimeout(() => { toast.classList.add('translate-x-full'); setTimeout(() => toast.remove(), 300); }, duration);
+            setTimeout(() => { 
+                toast.classList.add('translate-x-full'); 
+                setTimeout(() => toast.remove(), 300); 
+            }, duration);
+        }
+
+        // App Download Prompt Logic
+        function showAppDownloadPrompt() {
+            if (localStorage.getItem('appDownloadDismissed')) return;
+            const prompt = document.getElementById('download-app-prompt');
+            if (!prompt) return;
+            setTimeout(() => {
+                prompt.classList.add('active');
+                setTimeout(() => {
+                    prompt.classList.remove('active');
+                }, 10000); // 10-second prompt
+            }, 2000); // Delay to avoid clashing with loading screen
+
+            document.getElementById('download-app-btn')?.addEventListener('click', () => {
+                localStorage.setItem('appDownloadDismissed', 'true');
+                window.location.href = 'https://lionsgatevip.com/app-download'; // Replace with actual app download link
+                prompt.classList.remove('active');
+            });
+
+            document.getElementById('dismiss-app-prompt')?.addEventListener('click', () => {
+                localStorage.setItem('appDownloadDismissed', 'true');
+                prompt.classList.remove('active');
+            });
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             init3DBackground();
             appState.updateUI();
             tickerManager.init();
+            showAppDownloadPrompt();
 
             // Navigation
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    document.querySelectorAll('.nav-btn').forEach(b => b.classList.replace('border-gold', 'border-transparent'));
+                    document.querySelectorAll('.nav-btn').forEach(b => {
+                        b.classList.replace('border-gold', 'border-transparent');
+                        b.removeAttribute('aria-current');
+                    });
                     btn.classList.replace('border-transparent', 'border-gold');
+                    btn.setAttribute('aria-current', 'page');
                     document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
-                    document.getElementById(btn.dataset.page + '-page')?.classList.remove('hidden');
+                    const page = document.getElementById(btn.dataset.page + '-page');
+                    if (page) {
+                        page.classList.remove('hidden');
+                        page.scrollIntoView({ behavior: 'smooth' });
+                    }
                 });
             });
 
@@ -829,40 +925,65 @@
                 'donate-breast-cancer-btn': () => appState.createMailtoLink('Support Breast Cancer Innovation', 'Please send me information on how to donate.'),
                 'volunteer-orphanage-btn': () => appState.createMailtoLink('Volunteer for Sunshine Children\'s Home', 'I am interested in volunteering.'),
                 'support-hope-valley-btn': () => appState.createMailtoLink('Support Hope Valley Orphanage', 'How can I support Hope Valley?'),
-                'reactivate-from-modal': () => { appState.hideModal('account-status-modal'); appState.createMailtoLink('URGENT: Reactivation Request from Modal', 'Please reactivate my account.'); },
+                'reactivate-from-modal': () => { 
+                    appState.hideModal('account-status-modal'); 
+                    appState.createMailtoLink('URGENT: Reactivation Request from Modal', 'Please reactivate my account.');
+                },
             };
-            Object.keys(actions).forEach(id => document.getElementById(id)?.addEventListener('click', actions[id]));
+            Object.keys(actions).forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) btn.addEventListener('click', actions[id]);
+            });
 
             // VIP Card Download
-            document.getElementById('download-card-btn')?.addEventListener('click', (e) => {
+            document.getElementById('download-card-btn')?.addEventListener('click', async (e) => {
                 const button = e.currentTarget;
                 const originalHTML = button.innerHTML;
                 button.innerHTML = '<div class="loading-spinner"></div><span class="ml-2">Generating...</span>';
                 button.disabled = true;
                 const cardElement = document.getElementById('membership-card-downloadable');
-                if (!cardElement) return;
+                if (!cardElement) {
+                    showToast('Card element not found', 'error');
+                    button.innerHTML = originalHTML;
+                    button.disabled = false;
+                    return;
+                }
 
-                html2canvas(cardElement, { backgroundColor: null, scale: 3, useCORS: true }).then(canvas => {
+                try {
+                    const canvas = await html2canvas(cardElement, { 
+                        backgroundColor: null, 
+                        scale: 3, 
+                        useCORS: true,
+                        logging: false,
+                    });
                     const link = document.createElement('a');
                     link.download = `LionsGate_VIP_Card_${appState.get('memberId')}.png`;
                     link.href = canvas.toDataURL('image/png');
                     link.click();
                     showToast('VIP Card downloaded!', 'success');
-                }).catch(err => {
+                } catch (err) {
                     console.error('html2canvas error:', err);
                     showToast('Download failed. Please try again.', 'error');
-                }).finally(() => {
+                } finally {
                     button.innerHTML = originalHTML;
                     button.disabled = false;
-                });
+                }
             });
 
             // QR Code
             const qrContainer = document.getElementById('qr-code-small');
             if (qrContainer && typeof QRCode !== 'undefined') {
-                QRCode.toDataURL(`VIP_ID:${appState.get('memberId')}`, { width: 48, margin: 1 }, (err, url) => {
-                    if (err) console.error(err);
-                    else qrContainer.innerHTML = `<img src="${url}" alt="QR Code">`;
+                QRCode.toDataURL(`VIP_ID:${appState.get('memberId')}`, { 
+                    width: 48, 
+                    margin: 1, 
+                    errorCorrectionLevel: 'H' 
+                }, (err, url) => {
+                    if (err) {
+                        console.error('QR Code error:', err);
+                        showToast('Failed to generate QR code', 'error');
+                    } else {
+                        qrContainer.innerHTML = `<img src="${url}" alt="QR Code" loading="lazy">`;
+                    }
                 });
             }
 
@@ -871,7 +992,9 @@
                 el.addEventListener('click', () => appState.hideModal(el.closest('.modal').id));
             });
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') document.querySelectorAll('.modal.active').forEach(modal => appState.hideModal(modal.id));
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal.active').forEach(modal => appState.hideModal(modal.id));
+                }
             });
 
             // Loading Sequence
@@ -884,7 +1007,7 @@
                         loadingScreen.remove();
                         appState.showModal('upgrade-modal');
                     }, 500);
-                }, 1500);
+                }, 1000); // Reduced loading time
             }
 
             // Trigger alert modal on interaction
