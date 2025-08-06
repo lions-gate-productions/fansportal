@@ -7,6 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -25,17 +27,27 @@
                         'neon-glow': 'neon-glow 3s ease-in-out infinite',
                         'rotate-slow': 'rotate-slow 20s linear infinite',
                         'gradient-shift': 'gradient-shift 8s ease-in-out infinite',
-                        'ticker': 'ticker 60s linear infinite',
+                        'ticker': 'ticker 120s linear infinite',
+                        'bounce-gentle': 'bounce-gentle 4s ease-in-out infinite',
+                        'shimmer': 'shimmer 3s ease-in-out infinite',
+                        'wave': 'wave 4s ease-in-out infinite',
+                        'particle': 'particle 8s linear infinite',
+                        'hologram': 'hologram 6s ease-in-out infinite',
                     },
                     keyframes: {
                         float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-8px)' } },
                         glow: { '0%, 100%': { boxShadow: '0 0 20px rgba(255, 193, 7, 0.4)' }, '50%': { boxShadow: '0 0 40px rgba(255, 193, 7, 0.8)' } },
                         'slide-up': { '0%': { transform: 'translateY(30px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
                         'fade-in': { '0%': { opacity: '0', transform: 'scale(0.95)' }, '100%': { opacity: '1', transform: 'scale(1)' } },
-                        'neon-glow': { '0%, 100%': { boxShadow: '0 0 5px currentColor, 0 0 15px currentColor' }, '50%': { boxShadow: '0 0 10px currentColor, 0 0 20px currentColor' }, '100%': { boxShadow: '0 0 5px currentColor, 0 0 10px currentColor' } },
+                        'neon-glow': { '0%, 100%': { boxShadow: '0 0 5px currentColor, 0 0 15px currentColor' }, '50%': { boxShadow: '0 0 10px currentColor, 0 0 20px currentColor' } },
                         'rotate-slow': { '0%': { transform: 'rotate(0deg)' }, '100%': { transform: 'rotate(360deg)' } },
                         'gradient-shift': { '0%': { backgroundPosition: '0% 50%' }, '50%': { backgroundPosition: '100% 50%' }, '100%': { backgroundPosition: '0% 50%' } },
-                        'ticker': { '0%': { transform: 'translateX(100%)' }, '100%': { transform: 'translateX(-100%)' } }
+                        'ticker': { '0%': { transform: 'translateX(100%)' }, '100%': { transform: 'translateX(-100%)' } },
+                        'bounce-gentle': { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-5px)' } },
+                        'shimmer': { '0%': { backgroundPosition: '-200% 0' }, '100%': { backgroundPosition: '200% 0' } },
+                        'wave': { '0%, 100%': { transform: 'rotate(0deg)' }, '25%': { transform: 'rotate(2deg)' }, '75%': { transform: 'rotate(-2deg)' } },
+                        'particle': { '0%': { transform: 'translateY(0) rotate(0deg)', opacity: '1' }, '100%': { transform: 'translateY(-100vh) rotate(360deg)', opacity: '0' } },
+                        'hologram': { '0%, 100%': { filter: 'hue-rotate(0deg)' }, '50%': { filter: 'hue-rotate(180deg)' } }
                     }
                 }
             }
@@ -47,34 +59,273 @@
         * { -webkit-tap-highlight-color: transparent; user-select: none; }
         input, textarea { user-select: text; }
         html { scroll-behavior: smooth; }
-        body { font-family: 'Inter', sans-serif; overflow-x: hidden; background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); background-size: 400% 400%; animation: gradient-shift 15s ease infinite; }
-        .dark body { background: linear-gradient(-45deg, #2c1810, #3c1430, #1a3c50, #1a5042); background-size: 400% 400%; animation: gradient-shift 15s ease infinite; }
-        .glassmorphism { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); }
-        .dark .glassmorphism { background: rgba(20, 20, 20, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .news-ticker { background: linear-gradient(90deg, #ff0080, #ff8c00, #40e0d0); background-size: 300% 100%; animation: gradient-shift 3s ease infinite; color: white; font-weight: bold; padding: 8px 0; white-space: nowrap; overflow: hidden; }
-        .ticker-content { display: inline-block; animation: ticker 60s linear infinite; padding-left: 100%; }
-        .modal { opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 1000; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            overflow-x: hidden; 
+            background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #1a1a2e);
+            background-size: 400% 400%; 
+            animation: gradient-shift 15s ease infinite;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(255, 193, 7, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(212, 41, 28, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(138, 43, 226, 0.12) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+            animation: wave 8s ease-in-out infinite;
+        }
+        
+        .particle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 193, 7, 0.6);
+            border-radius: 50%;
+            animation: particle 8s linear infinite;
+            z-index: -1;
+        }
+        
+        .dark body { 
+            background: linear-gradient(-45deg, #0f0f23, #1a1a2e, #16213e, #0f3460); 
+            background-size: 400% 400%; 
+            animation: gradient-shift 15s ease infinite; 
+        }
+        
+        .glassmorphism { 
+            background: rgba(255, 255, 255, 0.08); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.15); 
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .glassmorphism:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .news-ticker { 
+            background: linear-gradient(90deg, #ff0080, #ff8c00, #40e0d0, #9932cc); 
+            background-size: 400% 100%; 
+            animation: gradient-shift 4s ease infinite; 
+            color: white; 
+            font-weight: bold; 
+            padding: 8px 0; 
+            white-space: nowrap; 
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        
+        .news-ticker::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shimmer 2s ease-in-out infinite;
+        }
+        
+        .ticker-content { 
+            display: inline-block; 
+            animation: ticker 120s linear infinite; 
+            padding-left: 100%; 
+            font-size: 12px;
+        }
+        
+        @media (min-width: 768px) {
+            .ticker-content { font-size: 14px; }
+            .news-ticker { padding: 12px 0; }
+        }
+        
+        .modal { 
+            opacity: 0; 
+            visibility: hidden; 
+            transition: opacity 0.3s ease, visibility 0.3s ease; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            z-index: 1000; 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px); 
+        }
+        
         .modal.active { opacity: 1; visibility: visible; }
-        .modal-content { transform: scale(0.9) translateY(20px); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease; }
+        
+        .modal-content { 
+            transform: scale(0.9) translateY(20px); 
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease; 
+        }
+        
         .modal.active .modal-content { transform: scale(1) translateY(0); opacity: 1; }
-        .btn-primary { display: inline-flex; align-items: center; justify-content: center; }
-        .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; }
+        
+        .btn-primary { 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center;
+            min-height: 44px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .loading-spinner { 
+            display: inline-block; 
+            width: 20px; 
+            height: 20px; 
+            border: 3px solid rgba(255, 255, 255, 0.3); 
+            border-radius: 50%; 
+            border-top-color: white; 
+            animation: spin 1s ease-in-out infinite; 
+        }
+        
+        .volunteer-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .volunteer-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .shimmer-effect {
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        .impact-counter {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--gold-light);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .voice-assistant {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+        
+        .voice-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .voice-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .voice-btn.listening {
+            animation: pulse 1s infinite;
+            background: linear-gradient(45deg, #ff416c 0%, #ff4b2b 100%);
+        }
+        
+        .voice-status {
+            position: absolute;
+            bottom: 70px;
+            left: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .voice-status.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        @media (max-width: 768px) {
+            .glassmorphism { padding: 1rem; margin: 0.5rem; }
+            .voice-assistant { bottom: 15px; left: 15px; }
+            .voice-btn { width: 50px; height: 50px; }
+            .modal-content { margin: 1rem; max-height: 90vh; overflow-y: auto; }
+            .impact-counter { font-size: 1.5rem; }
+        }
+        
+        .holographic {
+            background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
+            background-size: 200% 200%;
+            animation: hologram 6s ease-in-out infinite;
+        }
+        
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="min-h-screen">
+    <!-- Floating Particles -->
+    <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+    <div class="particle" style="left: 20%; animation-delay: 1s;"></div>
+    <div class="particle" style="left: 30%; animation-delay: 2s;"></div>
+    <div class="particle" style="left: 40%; animation-delay: 3s;"></div>
+    <div class="particle" style="left: 50%; animation-delay: 4s;"></div>
+    <div class="particle" style="left: 60%; animation-delay: 5s;"></div>
+    <div class="particle" style="left: 70%; animation-delay: 6s;"></div>
+    <div class="particle" style="left: 80%; animation-delay: 7s;"></div>
+    <div class="particle" style="left: 90%; animation-delay: 8s;"></div>
+
+    <!-- Voice Assistant -->
+    <div class="voice-assistant">
+        <div class="voice-status" id="voice-status">Say "Hey Portal" to start</div>
+        <button class="voice-btn" id="voice-btn" title="Voice Assistant">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+            </svg>
+        </button>
+    </div>
+
     <!-- Loading Screen -->
     <div id="loading-screen" class="fixed inset-0 bg-gradient-to-br from-primary to-primary-dark z-[9999] flex items-center justify-center">
         <div class="text-center text-white">
-            <div class="loading-spinner mb-4"></div>
-            <p class="text-lg font-semibold animate-pulse">Loading VIP Portal...</p>
+            <div class="loading-spinner mb-4 w-16 h-16 border-4 mx-auto"></div>
+            <p class="text-xl font-semibold animate-pulse">Loading VIP Portal...</p>
+            <p class="text-sm opacity-75 mt-2">Initializing your experience</p>
         </div>
     </div>
 
     <!-- News Ticker -->
     <div id="news-ticker" class="news-ticker">
         <div class="ticker-content" id="ticker-text">
-            <span>&nbsp;</span> <!-- Placeholder for seamless loop -->
+            <!-- Content dynamically updated by JS -->
         </div>
     </div>
 
@@ -85,19 +336,19 @@
             <div class="container mx-auto px-4 py-3">
                 <div class="flex justify-between items-center">
                     <div class="flex items-center">
-                        <div class="w-10 h-10 mr-3 rounded-full overflow-hidden border-2 border-gold">
-                            <img src="data:image/jpeg;base64,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" alt="Joan Luiser" class="w-full h-full object-cover">
+                        <div class="w-12 h-12 mr-3 rounded-full overflow-hidden border-2 border-gold animate-glow">
+                            <img src="https://pfst.cf2.poecdn.net/base/image/79a9e1287584e80e373ea1a79482547e0afea7f419240caff0c6e4f86ec4d572?w=1358&h=1428" alt="Joan Luiser" class="w-full h-full object-cover">
                         </div>
                         <div>
                             <h1 class="text-lg font-bold text-white" data-app-value="memberName">Joan Luiser</h1>
                             <div class="flex items-center space-x-2">
-                                <div class="points-badge text-xs bg-red-500/80 text-white animate-pulse">SUSPENDED</div>
-                                <div class="security-badge">SECURE</div>
+                                <div class="points-badge text-xs bg-red-500/80 text-white animate-pulse px-2 py-1 rounded">SUSPENDED</div>
+                                <div class="security-badge bg-green-500/80 text-white text-xs px-2 py-1 rounded">SECURE</div>
                             </div>
                         </div>
                     </div>
                     <div class="flex items-center space-x-3">
-                        <button id="contact-support-btn" aria-label="Contact Support" class="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center relative">
+                        <button id="contact-support-btn" aria-label="Contact Support" class="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center relative animate-bounce-gentle">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                         </button>
                     </div>
@@ -108,107 +359,104 @@
         <!-- Navigation -->
         <nav class="bg-white/5 dark:bg-black/10 backdrop-blur-sm border-b border-white/10">
             <div class="container mx-auto px-4">
-                <div class="flex space-x-6 overflow-x-auto">
-                    <button class="nav-btn py-3 px-4 text-white border-b-2 border-gold transition-all whitespace-nowrap" data-page="dashboard">
+                <div class="flex space-x-2 md:space-x-6 overflow-x-auto">
+                    <button class="nav-btn py-3 px-3 md:px-4 text-white border-b-2 border-gold transition-all whitespace-nowrap text-sm md:text-base" data-page="dashboard">
                         🏠 Dashboard
                     </button>
-                    <button class="nav-btn py-3 px-4 text-white border-b-2 border-transparent hover:border-gold transition-all whitespace-nowrap" data-page="security">
-                        🔒 Security Center
+                    <button class="nav-btn py-3 px-3 md:px-4 text-white border-b-2 border-transparent hover:border-gold transition-all whitespace-nowrap text-sm md:text-base" data-page="security">
+                        🔒 Security
+                    </button>
+                    <button class="nav-btn py-3 px-3 md:px-4 text-white border-b-2 border-transparent hover:border-gold transition-all whitespace-nowrap text-sm md:text-base" data-page="volunteer">
+                        ❤️ Volunteer
                     </button>
                 </div>
             </div>
         </nav>
 
         <!-- Page Content Container -->
-        <main id="page-content" class="container mx-auto px-4 py-6">
+        <main id="page-content" class="container mx-auto px-2 md:px-4 py-4 md:py-6">
             <!-- Dashboard Page -->
             <div id="dashboard-page" class="page-content">
-                <!-- Reactivation Banner -->
-                <section class="mb-8 glassmorphism rounded-2xl p-6 border-2 border-red-500/80 animate-pulse-slow">
+                <section class="mb-6 md:mb-8 glassmorphism rounded-2xl p-4 md:p-6 border-2 border-red-500/80 animate-pulse-slow">
                     <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
                         <div>
-                            <h2 class="text-2xl font-bold text-white mb-1">⚠️ Account Reactivation Required</h2>
+                            <h2 class="text-xl md:text-2xl font-bold text-white mb-1">⚠️ Account Reactivation Required</h2>
                             <p class="text-yellow-300 font-semibold text-lg">Your VIP access expires in 6 days!</p>
-                            <p class="text-white/80 mt-1">Contact support to reactivate your account and restore all VIP benefits.</p>
+                            <p class="text-white/80 mt-1 text-sm md:text-base">Contact support to reactivate your account and restore all VIP benefits.</p>
                         </div>
-                        <button id="reactivate-now-btn" class="btn-primary bg-primary hover:bg-primary-dark w-full md:w-auto px-8 py-3 rounded-xl text-lg font-semibold flex-shrink-0">
+                        <button id="reactivate-now-btn" class="btn-primary bg-primary hover:bg-primary-dark w-full md:w-auto px-6 md:px-8 py-3 rounded-xl text-lg font-semibold flex-shrink-0 animate-glow">
                             Reactivate Now
                         </button>
                     </div>
                 </section>
                 
-                <!-- Main Grid -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <!-- Left Column: Profile & Card -->
-                    <div class="lg:col-span-1 space-y-8">
-                        <!-- Profile Section -->
-                        <section id="profile-section" class="glassmorphism rounded-2xl p-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
+                    <div class="lg:col-span-1 space-y-6 md:space-y-8">
+                        <section id="profile-section" class="glassmorphism rounded-2xl p-4 md:p-6">
                              <div class="flex flex-col items-center text-center">
-                                <div class="relative w-32 h-32 mb-4">
+                                <div class="relative w-24 h-24 md:w-32 md:h-32 mb-4">
                                     <div class="absolute inset-0 bg-gradient-to-r from-gold via-primary to-gold rounded-full animate-rotate-slow opacity-30"></div>
                                     <div class="relative w-full h-full rounded-full overflow-hidden border-4 border-gold">
-                                        <img src="data:image/jpeg;base64,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" alt="Joan Luiser" class="w-full h-full object-cover">
+                                        <img src="https://pfst.cf2.poecdn.net/base/image/79a9e1287584e80e373ea1a79482547e0afea7f419240caff0c6e4f86ec4d572?w=1358&h=1428" alt="Joan Luiser" class="w-full h-full object-cover">
                                     </div>
                                 </div>
-                                <h2 class="text-2xl font-bold text-white mb-2" data-app-value="memberName">Joan Luiser</h2>
-                                <p class="text-white/70 mb-3">Member ID: <span class="font-mono text-gold" data-app-value="memberId">JL-1408-LG</span></p>
-                                <div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-bold mb-4 animate-glow">
+                                <h2 class="text-xl md:text-2xl font-bold text-white mb-2" data-app-value="memberName">Joan Luiser</h2>
+                                <p class="text-white/70 mb-3 text-sm md:text-base">Member ID: <span class="font-mono text-gold" data-app-value="memberId">JL-1408-LG</span></p>
+                                <div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 md:px-4 py-2 rounded-full text-sm font-bold mb-4 animate-glow holographic">
                                     🌟 VIP DOUBLE STAR 🌟
                                 </div>
                                 <div class="w-full glassmorphism rounded-xl p-4 grid grid-cols-2 gap-4 text-center">
                                     <div>
-                                        <div class="text-2xl font-bold text-green-400">0</div>
-                                        <div class="text-white/60 text-sm">Events</div>
+                                        <div class="text-xl md:text-2xl font-bold text-green-400">0</div>
+                                        <div class="text-white/60 text-xs md:text-sm">Events</div>
                                     </div>
                                     <div>
-                                        <div class="text-2xl font-bold text-purple-400">0</div>
-                                        <div class="text-white/60 text-sm">Badges</div>
+                                        <div class="text-xl md:text-2xl font-bold text-purple-400">0</div>
+                                        <div class="text-white/60 text-xs md:text-sm">Badges</div>
                                     </div>
                                 </div>
                             </div>
                         </section>
 
-                        <!-- Member Card Section -->
-                        <section id="membership-card-section" class="glassmorphism rounded-2xl p-6">
-                            <h3 class="text-2xl font-bold text-white mb-4 text-center">Digital Membership Card</h3>
+                        <section id="membership-card-section" class="glassmorphism rounded-2xl p-4 md:p-6">
+                            <h3 class="text-xl md:text-2xl font-bold text-white mb-4 text-center">Digital Membership Card</h3>
                             <div class="max-w-md mx-auto animate-float">
-                                <div class="membership-card p-2 bg-black/50 rounded-2xl">
-                                     <div class="p-5 bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-xl relative overflow-hidden border border-white/10">
+                                <div id="membership-card-downloadable" class="membership-card p-2 bg-black/50 rounded-2xl">
+                                     <div class="p-4 md:p-5 bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-xl relative overflow-hidden border border-white/10">
                                         <div class="flex items-center justify-between mb-4">
-                                            <div class="text-2xl font-bold text-white"><span class="text-primary">LIONS</span><span class="text-gold">GATE</span></div>
+                                            <div class="text-lg md:text-2xl font-bold text-white"><span class="text-primary">LIONS</span><span class="text-gold">GATE</span></div>
                                             <div class="text-xs text-white/70 text-right"><div class="text-gold font-bold">VIP DOUBLE STAR</div></div>
                                         </div>
-                                        <div class="flex items-center space-x-4 mb-5">
-                                            <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-gold flex-shrink-0">
-                                                <img src="data:image/jpeg;base64,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" alt="Joan Luiser" class="w-full h-full object-cover">
+                                        <div class="flex items-center space-x-3 md:space-x-4 mb-4 md:mb-5">
+                                            <div class="w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-gold flex-shrink-0">
+                                                <img src="https://pfst.cf2.poecdn.net/base/image/79a9e1287584e80e373ea1a79482547e0afea7f419240caff0c6e4f86ec4d572?w=1358&h=1428" alt="Joan Luiser" class="w-full h-full object-cover">
                                             </div>
                                             <div>
-                                                <h3 class="font-bold text-lg text-white" data-app-value="memberName">Joan Luiser</h3>
-                                                <p class="text-sm text-white/70 font-mono" data-app-value="memberId">JL-1408-LG</p>
+                                                <h3 class="font-bold text-base md:text-lg text-white" data-app-value="memberName">Joan Luiser</h3>
+                                                <p class="text-xs md:text-sm text-white/70 font-mono" data-app-value="memberId">JL-1408-LG</p>
                                             </div>
                                         </div>
-                                        <div class="grid grid-cols-2 gap-4 text-sm mb-4">
+                                        <div class="grid grid-cols-2 gap-4 text-xs md:text-sm mb-4">
                                             <div><div class="text-white/60">Status</div><div class="font-bold text-red-400">SUSPENDED</div></div>
                                             <div><div class="text-white/60">Member Since</div><div class="font-bold text-white">2023</div></div>
                                         </div>
                                         <div class="border-t border-white/20 pt-3 flex justify-between items-center">
                                             <div class="text-xs text-white/60">VIP Portal</div>
-                                            <div id="qr-code-small" class="w-8 h-8 bg-white rounded p-0.5"></div>
+                                            <div id="qr-code-small" class="w-6 h-6 md:w-8 md:h-8 bg-white rounded p-0.5"></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <button id="download-card-btn" class="w-full mt-6 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg">
+                            <button id="download-card-btn" class="w-full mt-4 md:mt-6 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg shimmer-effect text-sm md:text-base btn-primary">
                                 Download VIP Card
                             </button>
                         </section>
                     </div>
 
-                    <!-- Right Column: Live Feed -->
                     <div class="lg:col-span-2">
-                        <section id="live-updates-section" class="glassmorphism rounded-2xl p-6 h-full">
-                            <h3 class="text-2xl font-bold text-white mb-4">📺 Live Updates</h3>
-                            <div id="live-feed-container" class="space-y-4 max-h-[1200px] overflow-y-auto pr-2">
+                        <section id="live-updates-section" class="glassmorphism rounded-2xl p-4 md:p-6 h-full">
+                            <h3 class="text-xl md:text-2xl font-bold text-white mb-4">📺 Live Updates</h3>
+                            <div id="live-feed-container" class="space-y-4 max-h-[800px] md:max-h-[1200px] overflow-y-auto pr-2">
                                 <!-- Live feed items will be injected here by JavaScript -->
                             </div>
                         </section>
@@ -218,36 +466,113 @@
 
             <!-- Security Page -->
             <div id="security-page" class="page-content hidden">
-                 <!-- Content from original security page -->
                 <div class="mb-6">
-                    <h2 class="text-3xl font-bold text-white mb-2">🔒 Security Center</h2>
-                    <p class="text-white/70">Advanced protection for your VIP account and community safety</p>
+                    <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">🔒 Security Center</h2>
+                    <p class="text-white/70 text-sm md:text-base">Advanced protection for your VIP account and community safety</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                     <div class="glassmorphism rounded-xl p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                     <div class="glassmorphism rounded-xl p-4 md:p-6">
                         <h4 class="text-lg font-bold text-white mb-2">Fraud Protection</h4>
                         <p class="text-white/80 text-sm mb-3">AI monitoring detects and prevents unauthorized activities. Reactivate your account to ensure full protection.</p>
                         <div class="text-green-400/70 text-sm">✓ Real-time Monitoring<br/>✓ Identity Verification</div>
                     </div>
-                     <div class="glassmorphism rounded-xl p-6">
+                     <div class="glassmorphism rounded-xl p-4 md:p-6">
                         <h4 class="text-lg font-bold text-white mb-2">Report Suspicious Activity</h4>
                         <p class="text-white/80 text-sm mb-3">See something suspicious? Help keep our community safe by reporting it to our team.</p>
-                        <button id="report-fraud-btn" class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold py-2 px-4 rounded-lg">Report Now</button>
+                        <button id="report-fraud-btn" class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold py-2 px-4 rounded-lg min-h-[44px]">Report Now</button>
                     </div>
                 </div>
+            </div>
+
+            <!-- Volunteer Hub Page -->
+            <div id="volunteer-page" class="page-content hidden">
+                <div class="mb-6 md:mb-8 text-center">
+                    <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">❤️ Volunteer Hub</h2>
+                    <p class="text-white/70 text-sm md:text-base">Join Keanu Reeves in making a difference through charitable initiatives</p>
+                </div>
+
+                <!-- Impact Stats -->
+                 <section class="mb-8 md:mb-12">
+                    <div class="glassmorphism rounded-xl p-6 md:p-8">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                            <div>
+                                <div class="impact-counter text-gold">45+</div>
+                                <p class="text-sm text-white/60">Orphanages Supported</p>
+                            </div>
+                            <div>
+                                <div class="impact-counter text-gold">$2.8M</div>
+                                <p class="text-sm text-white/60">Cancer Research Funding</p>
+                            </div>
+                            <div>
+                                <div class="impact-counter text-gold">12,500+</div>
+                                <p class="text-sm text-white/60">Children Helped</p>
+                            </div>
+                             <div>
+                                <div class="impact-counter text-gold">892</div>
+                                <p class="text-sm text-white/60">Lives Saved</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Cancer Research Initiatives -->
+                <section class="mb-8 md:mb-12">
+                    <h3 class="text-2xl font-bold text-white mb-6 text-center">🔬 Cancer Research Initiatives</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="volunteer-card rounded-xl p-6 relative">
+                             <img src="https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?w=500&h=300&fit=crop" alt="Pediatric Cancer Research" class="w-full h-48 object-cover rounded-lg mb-4">
+                             <h4 class="text-xl font-bold text-white mb-2">👶 Pediatric Cancer Research</h4>
+                             <p class="text-white/80 text-sm mb-4">Groundbreaking research focused on childhood leukemia and brain tumors. Every donation directly funds clinical trials that save young lives.</p>
+                             <button id="donate-cancer-btn" class="w-full bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105">
+                                Support Research
+                            </button>
+                        </div>
+                        <div class="volunteer-card rounded-xl p-6">
+                            <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=500&h=300&fit=crop" alt="Breast Cancer Research" class="w-full h-48 object-cover rounded-lg mb-4">
+                            <h4 class="text-xl font-bold text-white mb-2">🎗️ Breast Cancer Innovation Lab</h4>
+                            <p class="text-white/80 text-sm mb-4">Advanced research into early detection methods and personalized treatment approaches for breast cancer patients worldwide.</p>
+                            <button id="donate-breast-cancer-btn" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105">
+                                Support Innovation
+                            </button>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Orphanage Support Programs -->
+                <section class="mb-8 md:mb-12">
+                    <h3 class="text-2xl font-bold text-white mb-6 text-center">🏠 Orphanage Support Programs</h3>
+                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="volunteer-card rounded-xl p-6 relative">
+                             <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=500&h=300&fit=crop" alt="Sunshine Children's Home" class="w-full h-48 object-cover rounded-lg mb-4">
+                             <h4 class="text-xl font-bold text-white mb-2">🌟 Sunshine Children's Home (Kenya)</h4>
+                             <p class="text-white/80 text-sm mb-4">This home for 150 children needs educational supplies, nutritious meals, and recreational activities. Your help brings them joy and a future.</p>
+                             <button id="volunteer-orphanage-btn" class="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105">
+                                Join This Program
+                            </button>
+                        </div>
+                        <div class="volunteer-card rounded-xl p-6">
+                            <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=500&h=300&fit=crop" alt="Hope Valley Orphanage" class="w-full h-48 object-cover rounded-lg mb-4">
+                            <h4 class="text-xl font-bold text-white mb-2">🏡 Hope Valley Orphanage (Uganda)</h4>
+                            <p class="text-white/80 text-sm mb-4">A sanctuary for 85 children focusing on healthcare, education, and vocational training. Support their journey to self-sufficiency.</p>
+                             <button id="support-hope-valley-btn" class="w-full bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105">
+                                Support Hope Valley
+                            </button>
+                        </div>
+                    </div>
+                </section>
             </div>
         </main>
     </div>
     
-    <!-- Upgrade Modal -->
+    <!-- Modals -->
     <div id="upgrade-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="upgrade-modal-title">
         <div class="absolute inset-0 bg-black/60" data-close-modal></div>
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="modal-content glassmorphism rounded-2xl shadow-2xl max-w-lg w-full mx-auto z-10 border-2 border-gold/50">
-                <div class="p-8 relative text-center">
-                    <div class="text-6xl mb-4">🚀</div>
-                    <h3 id="upgrade-modal-title" class="text-2xl font-bold text-white">The VIP Portal Has Leveled Up!</h3>
-                    <p class="text-white/80 text-md mt-2 mb-6">
+                <div class="p-6 md:p-8 relative text-center">
+                    <div class="text-4xl md:text-6xl mb-4 animate-bounce-gentle">🚀</div>
+                    <h3 id="upgrade-modal-title" class="text-xl md:text-2xl font-bold text-white">The VIP Portal Has Leveled Up!</h3>
+                    <p class="text-white/80 text-sm md:text-base mt-2 mb-6">
                         Welcome to the new and improved Lions Gate VIP experience, <span class="font-bold" data-app-value="memberName"></span>.
                     </p>
                     <div class="space-y-4 text-left bg-white/5 rounded-xl p-4 mb-6">
@@ -258,15 +583,29 @@
                                 <p class="text-sm text-white/70">Download your official, secure VIP membership card directly from your dashboard.</p>
                             </div>
                         </div>
-                         <div class="flex items-start space-x-3">
+                        <div class="flex items-start space-x-3">
                             <div class="text-gold text-xl mt-1">✓</div>
                             <div>
                                 <h4 class="font-semibold text-white">Enhanced Security</h4>
                                 <p class="text-sm text-white/70">Your account is now protected by our latest security protocols and real-time monitoring.</p>
                             </div>
                         </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="text-gold text-xl mt-1">✓</div>
+                            <div>
+                                <h4 class="font-semibold text-white">Voice Assistant</h4>
+                                <p class="text-sm text-white/70">Use voice commands to navigate the portal and get instant support.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="text-gold text-xl mt-1">✓</div>
+                            <div>
+                                <h4 class="font-semibold text-white">Volunteer Hub</h4>
+                                <p class="text-sm text-white/70">Join Keanu's charitable initiatives and make a real difference in the world.</p>
+                            </div>
+                        </div>
                     </div>
-                    <button data-close-modal class="w-full btn-primary py-3 px-6 rounded-xl text-lg font-semibold bg-gold hover:bg-gold-dark">
+                    <button data-close-modal class="w-full btn-primary py-3 px-6 rounded-xl text-lg font-semibold bg-gold hover:bg-gold-dark shimmer-effect">
                         Explore the New Portal
                     </button>
                 </div>
@@ -274,157 +613,341 @@
         </div>
     </div>
 
+    <div id="account-status-modal" class="modal" role="dialog" aria-modal="true">
+        <div class="absolute inset-0 bg-black/60" data-close-modal></div>
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="modal-content glassmorphism rounded-2xl shadow-2xl max-w-lg w-full mx-auto z-10 border-2 border-red-500/80">
+                <div class="p-6 md:p-8 relative">
+                    <div class="text-center mb-6">
+                        <div class="text-4xl md:text-6xl mb-4 animate-pulse">⚠️</div>
+                        <h3 class="text-xl md:text-2xl font-bold text-white">Account Status Alert</h3>
+                    </div>
+                    <div class="bg-red-500/10 border border-red-500/50 rounded-xl p-4 mb-6">
+                        <div class="flex items-start space-x-3">
+                            <div class="text-red-400 text-lg mt-1">🚨</div>
+                            <div>
+                                <h4 class="font-semibold text-white">VIP Access Suspended</h4>
+                                <p class="text-red-200 text-sm mt-1">Your account requires immediate reactivation to restore full VIP benefits including:</p>
+                                <ul class="text-red-200 text-sm mt-2 space-y-1">
+                                    <li>• Exclusive movie screenings & event access</li>
+                                    <li>• Premium customer support</li>
+                                    <li>• Special merchandise offers</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button id="reactivate-from-modal" class="flex-1 bg-gradient-to-r from-primary to-primary-dark text-white font-bold py-3 px-6 rounded-xl shimmer-effect min-h-[44px]">
+                            Reactivate Now
+                        </button>
+                        <button data-close-modal class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-xl min-h-[44px]">
+                            Later
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="fixed top-20 right-4 z-[9999] space-y-2 max-w-sm"></div>
 
     <script>
         class AppState {
             constructor() {
                 this.data = {
-                    isActivated: false,
                     memberName: 'Joan Luiser',
                     memberId: 'JL-1408-LG',
                     status: 'VIP Double Star',
-                    memberSince: '2023',
+                };
+                this.voiceCommands = {
+                    'dashboard': () => this.navigateTo('dashboard'),
+                    'security': () => this.navigateTo('security'),
+                    'volunteer': () => this.navigateTo('volunteer'),
+                    'help': () => this.showHelp(),
+                    'reactivate': () => this.reactivateAccount(),
+                    'contact support': () => this.contactSupport()
                 };
             }
+            
             get(key) { return this.data[key]; }
-            set(key, value) { this.data[key] = value; this.updateUI(); }
+            
             updateUI() {
                 document.querySelectorAll('[data-app-value]').forEach(el => {
                     const key = el.getAttribute('data-app-value');
-                    if (this.data[key]) {
-                        el.textContent = this.data[key];
-                    }
+                    if (this.data[key]) el.textContent = this.data[key];
                 });
             }
             
-            createMailtoLink(subject, body) {
-                const memberInfo = `\n\n---\nMember Name: ${this.get('memberName')}\nMember ID: ${this.get('memberId')}\nStatus: ${this.get('status')}`;
+            navigateTo(page) {
+                const btn = document.querySelector(`.nav-btn[data-page="${page}"]`);
+                if (btn) btn.click();
+                this.speak(`Navigating to ${page}`);
+            }
+            
+            showHelp() { this.speak('Available commands: dashboard, security, volunteer, help, reactivate, contact support'); }
+            
+            reactivateAccount() {
+                document.getElementById('reactivate-now-btn')?.click();
+                this.speak('Opening account reactivation request');
+            }
+            
+            contactSupport() {
+                document.getElementById('contact-support-btn')?.click();
+                this.speak('Opening support contact form');
+            }
+            
+            speak(text) {
+                if ('speechSynthesis' in window && speech_enabled) {
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.rate = 0.9;
+                    utterance.pitch = 1.1;
+                    speechSynthesis.speak(utterance);
+                }
+            }
+            
+            createMailtoLink(subject, body, recipient = 'erwinstoff0766@gmail.com') {
+                const memberInfo = `\n\n---\nMember Name: ${this.get('memberName')}\nMember ID: ${this.get('memberId')}`;
                 const fullBody = encodeURIComponent(body + memberInfo);
                 const fullSubject = encodeURIComponent(subject);
-                window.location.href = `mailto:support@lionsgatevip.com?subject=${fullSubject}&body=${fullBody}`;
+                window.location.href = `mailto:${recipient}?subject=${fullSubject}&body=${fullBody}`;
             }
 
-            showModal(modal) {
+            showModal(modalId) {
+                const modal = document.getElementById(modalId);
                 if (!modal) return;
                 modal.classList.add('active');
                 modal.querySelector('[data-close-modal], button')?.focus();
             }
 
-            hideModal(modal) {
+            hideModal(modalId) {
+                const modal = document.getElementById(modalId);
                 if (!modal) return;
                 modal.classList.remove('active');
             }
         }
 
+        class VoiceAssistant {
+            constructor(appState) {
+                this.appState = appState;
+                this.isListening = false;
+                this.recognition = null;
+                this.init();
+            }
+            
+            init() {
+                try {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    if (!SpeechRecognition) {
+                        this.updateUI('Voice not supported');
+                        return;
+                    }
+                    this.recognition = new SpeechRecognition();
+                    this.recognition.continuous = false;
+                    this.recognition.interimResults = false;
+                    this.recognition.lang = 'en-US';
+                    
+                    this.recognition.onstart = () => { this.isListening = true; this.updateUI('Listening...'); };
+                    this.recognition.onresult = (event) => this.processCommand(event.results[0][0].transcript.toLowerCase());
+                    this.recognition.onerror = (e) => { this.isListening = false; if(e.error !== 'no-speech') this.updateUI('Voice error. Try again.'); };
+                    this.recognition.onend = () => { this.isListening = false; this.updateUI('Say "Hey Portal"'); };
+                    
+                    document.getElementById('voice-btn')?.addEventListener('click', () => {
+                        this.isListening ? this.recognition.stop() : this.recognition.start();
+                    });
+                } catch (e) {
+                    console.error("Voice recognition failed to initialize:", e);
+                    this.updateUI('Voice init failed');
+                }
+            }
+
+            processCommand(transcript) {
+                this.updateUI(`Heard: "${transcript}"`);
+                const command = Object.keys(this.appState.voiceCommands).find(cmd => transcript.includes(cmd));
+                
+                if (transcript.includes('hey portal')) {
+                    this.appState.speak('Hello Joan! How can I help you today?');
+                } else if (command) {
+                    this.appState.voiceCommands[command]();
+                } else {
+                    this.appState.speak('Sorry, I didn\'t understand. Say "help" for commands.');
+                }
+            }
+            
+            updateUI(message) {
+                const status = document.getElementById('voice-status');
+                const btn = document.getElementById('voice-btn');
+                if (status) {
+                    status.textContent = message;
+                    status.classList.add('active');
+                    setTimeout(() => status.classList.remove('active'), 3000);
+                }
+                if (btn) {
+                    this.isListening ? btn.classList.add('listening') : btn.classList.remove('listening');
+                }
+            }
+        }
+
         const appState = new AppState();
+        let speech_enabled = true; // Control speech synthesis
+        const voiceAssistant = new VoiceAssistant(appState);
 
         const liveFeedGenerator = {
             topics: {
-                keanu: { sources: ["Keanu_Updates", "DailyReeves", "NotKeanuReeves"], templates: ["Spotted! Keanu Reeves enjoying a quiet coffee in downtown LA. Ever the humble star.","Rumor has it Keanu is already training for his next big role. Can't wait to see what it is!","Throwback to Keanu's iconic role in The Matrix. A true legend of cinema."], images: ["https://images.unsplash.com/photo-1595152772235-d5a2ea7d45fee?w=800","https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800","https://images.unsplash.com/photo-1544723795-3fb6469f5b39?w=800"] },
-                johnwick: { sources: ["TheHighTable", "WickFanClub_JW", "ContinentalInsider"], templates: ["Just rewatched John Wick: Chapter 4. The action choreography is simply on another level.","Breaking: A new 'John Wick' spin-off series is in early development at Lionsgate! More details to come.","What's your favorite weapon from the John Wick universe? The pencil will always be iconic."], images: ["https://images.unsplash.com/photo-1694883438914-177933555544?w=800","https://images.unsplash.com/photo-1590212151007-3a53452174d8?w=800","https://images.unsplash.com/photo-1542273917363-3b1817469a68?w=800"] },
-                ballerina: { sources: ["Variety", "HollywoodReporter", "Deadline"], templates: ["First look at Ana de Armas in 'Ballerina' has been released! The 'John Wick' universe is expanding.","Insider info suggests Keanu Reeves will have a significant cameo in 'Ballerina'.","'Ballerina' has officially wrapped filming. Post-production is now underway for a 2025 release."], images: ["https://images.unsplash.com/photo-1528776583953-8869b158352b?w=800","https://images.unsplash.com/photo-1508693495839-a9994c8b2c45?w=800","https://images.unsplash.com/photo-1574681324272-9a5993a44302?w=800"] },
-                lionsgate: { sources: ["Lionsgate", "MovieNews", "BoxOfficeUpdates"], templates: ["Lionsgate announces a strong slate for the upcoming year, with several major franchises returning.","Lionsgate stock (LGF.A) saw a positive trend today following recent project announcements.","We're committed to bringing the best cinematic experiences to our fans. Thank you for being part of the pride!"], images: ["https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800","https://images.unsplash.com/photo-1574267432553-8b4d18080e12?w=800","https://images.unsplash.com/photo-1627483262268-9c2b5b2834b5?w=800"] }
+                keanu: { sources: ["Keanu_Updates", "DailyReeves"], templates: ["Spotted! Keanu Reeves enjoying a quiet coffee in downtown LA. 📸", "Rumor has it Keanu is already training for his next big role. Can't wait! 🎬"], images: ["https://pfst.cf2.poecdn.net/base/image/aad5199a248784b6bfae2178dd6d31970b7cefceb5dbdb3d6deaf5d15c4e5856?w=800&h=1200", "https://pfst.cf2.poecdn.net/base/image/37b393e0749a80a972095214665a7e050472e319bc29732d9e6cc09fb5dfd171?w=1024&h=1536"] },
+                johnwick: { sources: ["TheHighTable", "WickFanClub_JW"], templates: ["Rewatching John Wick: Chapter 4. The action is on another level. 🔥", "Breaking: A new 'John Wick' spin-off series is in early development! 📺"], images: ["https://pfst.cf2.poecdn.net/base/image/dbea519b2b3f5e29a043d6a882171931463ba2de01bbb7adfd86be957c881969?w=800&h=541", "https://pfst.cf2.poecdn.net/base/image/42fee9d9e09ebb02c7d56381b0205958a69119e7f60e5d98d18fb51e286ca60b?w=800&h=533"] },
+                ballerina: { sources: ["Variety", "HollywoodReporter"], templates: ["First look at Ana de Armas in 'Ballerina' is here! The John Wick universe expands. 💃", "Insider info suggests Keanu Reeves has a significant cameo in 'Ballerina'. 🎭"], images: ["https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=200&fit=crop", "https://pfst.cf2.poecdn.net/base/image/79a9e1287584e80e373ea1a79482547e0afea7f419240caff0c6e4f86ec4d572?w=1358&h=1428"] }
             },
             getRandomElement(arr) { return arr[Math.floor(Math.random() * arr.length)]; },
             generatePost() {
                 const topicKey = this.getRandomElement(Object.keys(this.topics));
                 const topic = this.topics[topicKey];
-                return { source: this.getRandomElement(topic.sources), text: this.getRandomElement(topic.templates), image: this.getRandomElement(topic.images), time: `${Math.floor(Math.random() * 59) + 1}m ago` };
+                return { source: this.getRandomElement(topic.sources), text: this.getRandomElement(topic.templates), image: this.getRandomElement(topic.images), time: `${Math.floor(Math.random() * 12) + 1}h ago` };
             },
             createPostElement(post) {
                 const el = document.createElement('div');
-                el.className = 'bg-white/5 rounded-lg p-3 animate-fade-in';
+                el.className = 'bg-white/5 rounded-lg p-3 md:p-4 animate-fade-in border border-white/10 hover:bg-white/10 transition-all';
                 el.innerHTML = `
                     <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center">
-                            <img src="${post.image}" alt="Profile picture for ${post.source}" class="w-8 h-8 rounded-full mr-2 object-cover">
-                            <span class="text-gold font-bold text-sm">${post.source}</span>
-                        </div>
+                        <div class="flex items-center"><img src="${post.image}" alt="${post.source}" class="w-8 h-8 md:w-10 md:h-10 rounded-full mr-3 object-cover border-2 border-gold/30"><span class="text-gold font-bold text-xs md:text-sm">${post.source}</span></div>
                         <span class="text-white/60 text-xs">${post.time}</span>
                     </div>
-                    <p class="text-white/90 text-sm mb-3">${post.text}</p>
-                    <img src="${post.image}" alt="Image related to the post" class="w-full h-40 object-cover rounded-md">`;
+                    <p class="text-white/90 text-sm mb-3 leading-relaxed">${post.text}</p>
+                    <img src="${post.image}" alt="Post image" class="w-full h-32 md:h-48 object-cover rounded-lg shadow-lg">
+                    <div class="flex items-center justify-between mt-3 pt-3 border-t border-white/10 text-white/60 text-xs">
+                        <span class="flex items-center">👍 ${Math.floor(Math.random()*500)+50}</span>
+                        <span class="flex items-center">💬 ${Math.floor(Math.random()*50)+5}</span>
+                        <span class="flex items-center">🔄 ${Math.floor(Math.random()*100)+10}</span>
+                    </div>`;
                 return el;
             },
             start() {
                 const container = document.getElementById('live-feed-container');
                 if (!container) return;
-                setInterval(() => {
-                    const post = this.generatePost();
-                    const postElement = this.createPostElement(post);
+                for (let i=0; i<5; i++) container.appendChild(this.createPostElement(this.generatePost()));
+                this.interval = setInterval(() => {
+                    const postElement = this.createPostElement(this.generatePost());
                     container.prepend(postElement);
                     if (container.children.length > 20) container.lastChild.remove();
-                }, 7000);
+                }, 15000);
+            },
+            stop() { clearInterval(this.interval); }
+        };
+        
+        const tickerManager = {
+            messages: ["🎬 Welcome to Lions Gate VIP Portal!", "🚀 John Wick: Chapter 5 - Coming March 2025!", "🌟 Exclusive 'Ballerina' screening this February", "🎭 Keanu Reeves Live Q&A - Feb 15th, 2025", "🎯 Support Keanu's cancer research", "💎 Your account expires in 6 days - Reactivate now!"],
+            init() {
+                this.updateTicker();
+                setInterval(() => this.updateTicker(), 30000);
+            },
+            updateTicker() {
+                const tickerElement = document.getElementById('ticker-text');
+                if (!tickerElement) return;
+                const shuffled = [...this.messages].sort(() => 0.5 - Math.random());
+                tickerElement.innerHTML = shuffled.map(msg => `&nbsp;&nbsp;&nbsp;&nbsp;${msg}`).join('');
             }
         };
 
+        function showToast(message, type = 'info', duration = 5000) {
+            const toastContainer = document.getElementById('toast-container');
+            if (!toastContainer) return;
+            const toast = document.createElement('div');
+            const typeClasses = { success: 'bg-green-500', error: 'bg-red-500', info: 'bg-blue-500' };
+            toast.className = `${typeClasses[type]} text-white px-4 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 max-w-xs`;
+            toast.innerHTML = `<div class="flex items-center justify-between"><p class="text-sm">${message}</p><button class="ml-3 text-white hover:text-gray-200" onclick="this.parentElement.parentElement.remove()">X</button></div>`;
+            toastContainer.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-x-full'), 100);
+            setTimeout(() => { toast.classList.add('translate-x-full'); setTimeout(() => toast.remove(), 300); }, duration);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             appState.updateUI();
-            
-            const tickerText = document.getElementById('ticker-text');
-            const messages = ["BREAKING: John Wick 5 premieres March 2025!", "VIP Double Star members get exclusive Disney Land packages!", "Report suspicious activity to protect our community!", "Live Q&A with Keanu Reeves February 15th!"];
-            tickerText.innerHTML = messages.map(m => `&nbsp;&nbsp;&nbsp;&nbsp;🎬 ${m}`).join('');
+            tickerManager.init();
 
+            // Navigation
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const targetPageId = btn.dataset.page + '-page';
-                    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('border-gold'));
-                    btn.classList.add('border-gold');
+                    document.querySelectorAll('.nav-btn').forEach(b => b.classList.replace('border-gold', 'border-transparent'));
+                    btn.classList.replace('border-transparent', 'border-gold');
                     document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
                     document.getElementById(targetPageId)?.classList.remove('hidden');
                 });
             });
 
-            document.getElementById('reactivate-now-btn')?.addEventListener('click', () => {
-                appState.createMailtoLink('URGENT: VIP Account Reactivation Request', 'Hello Support Team,\n\nPlease reactivate my VIP account. My portal indicates that my access is about to expire, and I would like to restore my full benefits immediately.\n\nThank you for your prompt assistance.');
-            });
-            
-            document.getElementById('contact-support-btn')?.addEventListener('click', () => {
-                 appState.createMailtoLink('VIP Portal Support Inquiry', 'Hello Support Team,\n\nI have a question about my VIP account.');
-            });
+            // Button Actions
+            const actions = {
+                'reactivate-now-btn': () => appState.createMailtoLink('URGENT: VIP Account Reactivation', 'Please reactivate my VIP account immediately.'),
+                'contact-support-btn': () => appState.createMailtoLink('VIP Portal Support Inquiry', 'I have a question about my VIP account.'),
+                'report-fraud-btn': () => appState.createMailtoLink('SECURITY ALERT: Report', 'I would like to report suspicious activity.'),
+                'donate-cancer-btn': () => appState.createMailtoLink('Support Pediatric Cancer Research', 'I would like to donate to this cause.'),
+                'donate-breast-cancer-btn': () => appState.createMailtoLink('Support Breast Cancer Innovation', 'Please send me information on how to donate.'),
+                'volunteer-orphanage-btn': () => appState.createMailtoLink('Volunteer for Sunshine Children\'s Home', 'I am interested in volunteering.'),
+                'support-hope-valley-btn': () => appState.createMailtoLink('Support Hope Valley Orphanage', 'How can I support Hope Valley?'),
+                'reactivate-from-modal': () => { appState.hideModal('account-status-modal'); appState.createMailtoLink('URGENT: Reactivation Request from Modal', 'Please reactivate my account.'); },
+            };
+            Object.keys(actions).forEach(id => document.getElementById(id)?.addEventListener('click', actions[id]));
 
+            // VIP Card Download
             document.getElementById('download-card-btn')?.addEventListener('click', (e) => {
                 const button = e.currentTarget;
-                const originalText = button.innerHTML;
-                button.innerHTML = '<div class="loading-spinner"></div>';
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<div class="loading-spinner"></div><span class="ml-2">Generating...</span>';
                 button.disabled = true;
-                const card = document.querySelector('.membership-card');
+                const cardElement = document.getElementById('membership-card-downloadable');
+                if (!cardElement) return;
 
-                html2canvas(card, { backgroundColor: null, scale: 2, useCORS: true }).then(canvas => {
+                html2canvas(cardElement, { backgroundColor: null, scale: 3, useCORS: true }).then(canvas => {
                     const link = document.createElement('a');
                     link.download = `LionsGate_VIP_Card_${appState.get('memberId')}.png`;
                     link.href = canvas.toDataURL('image/png');
                     link.click();
-                    button.innerHTML = originalText;
-                    button.disabled = false;
-                }).catch(() => {
-                    button.innerHTML = originalText;
+                    showToast('VIP Card downloaded!', 'success');
+                }).catch(err => {
+                    console.error('html2canvas error:', err);
+                    showToast('Download failed. Please try again.', 'error');
+                }).finally(() => {
+                    button.innerHTML = originalHTML;
                     button.disabled = false;
                 });
             });
-            
-            document.getElementById('report-fraud-btn')?.addEventListener('click', () => {
-                appState.createMailtoLink('Fraud Report - Suspicious Activity', 'Hello Security Team,\n\nI would like to report suspicious activity I observed. Please see the details below:\n\n[PLEASE DESCRIBE THE INCIDENT HERE]');
-            });
 
+            // QR Code
             const qrContainer = document.getElementById('qr-code-small');
             if (qrContainer && typeof QRCode !== 'undefined') {
-                QRCode.toCanvas(qrContainer, `VIP_ID:${appState.get('memberId')}`, { width: 32, height: 32, margin: 0 });
+                QRCode.toDataURL(`VIP_ID:${appState.get('memberId')}`, { width: 48, margin: 1 }, (err, url) => {
+                    if (err) console.error(err); else qrContainer.innerHTML = `<img src="${url}" alt="QR Code">`;
+                });
             }
 
-            document.querySelectorAll('.modal [data-close-modal]').forEach(el => {
-                el.addEventListener('click', () => appState.hideModal(el.closest('.modal')));
+            // Modals
+            document.querySelectorAll('[data-close-modal]').forEach(el => {
+                el.addEventListener('click', () => appState.hideModal(el.closest('.modal').id));
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') document.querySelectorAll('.modal.active').forEach(modal => appState.hideModal(modal.id));
             });
 
+            // Loading sequence
             setTimeout(() => {
-                document.getElementById('loading-screen')?.style.setProperty('opacity', '0');
-                document.getElementById('main-content')?.style.setProperty('opacity', '1');
-                setTimeout(() => {
-                    document.getElementById('loading-screen')?.remove();
-                    appState.showModal(document.getElementById('upgrade-modal'));
-                    liveFeedGenerator.start();
-                }, 500);
+                const loadingScreen = document.getElementById('loading-screen');
+                if (loadingScreen) {
+                    loadingScreen.style.opacity = '0';
+                    document.getElementById('main-content')?.style.setProperty('opacity', '1');
+                    setTimeout(() => {
+                        loadingScreen.remove();
+                        appState.showModal('upgrade-modal');
+                        liveFeedGenerator.start();
+                    }, 500);
+                }
             }, 1500);
+
+            // Trigger alert modal on interaction
+            let interactionCount = 0;
+            document.addEventListener('click', () => {
+                interactionCount++;
+                if (interactionCount === 5) appState.showModal('account-status-modal');
+            }, { once: true });
         });
     </script>
 </body>
