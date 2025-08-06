@@ -1,33 +1,49 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Lions Gate VIP Portal - Joan Luiser</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Lions Gate VIP Portal - Exclusive access for members">
     <title>Lions Gate VIP Portal</title>
-    <link rel="stylesheet" href="/styles/tailwind.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js" defer></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Additional styles and scripts removed for brevity -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" relSave rel="stylesheet">
     <style>
-        :root {
-            --gold: #FFD700;
-            --blue-dark: #1E3A8A;
-            --purple-dark: #6B21A8;
-        }
         * { -webkit-tap-highlight-color: transparent; user-select: none; }
         input, textarea { user-select: text; }
         html { scroll-behavior: smooth; }
-        body {
-            font-family: 'Inter', sans-serif;
+        body { 
+            font-family: 'Inter', sans-serif; 
+            overflow-x: hidden; 
             background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #1a1a2e);
-            background-size: 400% 400%;
+            background-size: 400% 400%; 
             animation: gradient-shift 15s ease infinite;
+            position: relative;
             min-height: 100vh;
-            overflow-x: hidden;
+        }
+        .dark body { 
+            background: linear-gradient(-45deg, #0f0f23, #1a1a2e, #16213e, #0f3460); 
+            background-size: 400% 400%; 
+            animation: gradient-shift 15s ease infinite; 
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(255, 193, 7, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(212, 41, 28, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(138, 43, 226, 0.12) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+            animation: wave 8s ease-in-out infinite;
         }
         #three-canvas {
             position: fixed;
@@ -35,72 +51,113 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
+            z-index: -2;
             opacity: 0.3;
         }
-        .glassmorphism {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s ease;
+        .glassmorphism { 
+            background: rgba(255, 255, 255, 0.08); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.15); 
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
         }
-        .glassmorphism:hover { transform: translateY(-2px); }
-        .news-ticker {
-            background: linear-gradient(90deg, #ff0080, #ff8c00, #40e0d0, #9932cc);
-            background-size: 400% 100%;
-            animation: gradient-shift 4s ease infinite;
-            color: white;
-            font-weight: bold;
-            padding: 8px 0;
-            white-space: nowrap;
+        .glassmorphism:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+        .news-ticker { 
+            background: linear-gradient(90deg, #ff0080, #ff8c00, #40e0d0, #9932cc); 
+            background-size: 400% 100%; 
+            animation: gradient-shift 4s ease infinite; 
+            color: white; 
+            font-weight: bold; 
+            padding: 8px 0; 
+            white-space: nowrap; 
             overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
         }
-        .ticker-content {
-            display: inline-block;
-            animation: ticker 60s linear infinite;
-            padding-left: 100%;
-            font-size: 12px;
-        }
-        .modal {
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease;
-            position: fixed;
+        .news-ticker::before {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            z-index: 1000;
-            backdrop-filter: blur(8px);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shimmer 2s ease-in-out infinite;
+        }
+        .ticker-content { 
+            display: inline-block; 
+            animation: ticker 120s linear infinite; 
+            padding-left: 100%; 
+            font-size: 12px;
+        }
+        @media (min-width: 768px) {
+            .ticker-content { font-size: 14px; }
+            .news-ticker { padding: 12px 0; }
+        }
+        .modal { 
+            opacity: 0; 
+            visibility: hidden; 
+            transition: opacity 0.3s ease, visibility 0.3s ease; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            z-index: 1000; 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px); 
         }
         .modal.active { opacity: 1; visibility: visible; }
-        .modal-content {
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
+        .modal-content { 
+            transform: scale(0.9) translateY(20px); 
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease; 
         }
-        .modal.active .modal-content { transform: scale(1); }
-        .btn-primary {
-            background: linear-gradient(45deg, var(--blue-dark), var(--purple-dark));
-            color: white;
-            font-weight: 700;
-            border-radius: 8px;
-            padding: 10px;
-            min-height: 40px;
-            display: flex;
-            align-items: center;
+        .modal.active .modal-content { transform: scale(1) translateY(0); opacity: 1; }
+        .btn-primary { 
+            display: inline-flex; 
+            align-items: center; 
             justify-content: center;
-            transition: transform 0.2s ease;
+            min-height: 44px;
+            transition: all 0.3s ease;
         }
-        .btn-primary:hover { transform: translateY(-2px); }
-        .loading-spinner {
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        .loading-spinner { 
+            display: inline-block; 
+            width: 20px; 
+            height: 20px; 
+            border: 3px solid rgba(255, 255, 255, 0.3); 
+            border-radius: 50%; 
+            border-top-color: white; 
+            animation: spin 1s ease-in-out infinite; 
+        }
+        .volunteer-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .volunteer-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        .shimmer-effect {
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        .impact-counter {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--gold-light);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .voice-assistant {
             position: fixed;
@@ -112,16 +169,24 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
             border: none;
             color: white;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
         }
-        .voice-btn.listening { animation: pulse 1s infinite; }
+        .voice-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+        .voice-btn.listening {
+            animation: pulse 1s infinite;
+            background: linear-gradient(45deg, #ff416c 0%, #ff4b2b 100%);
+        }
         .voice-status {
             position: absolute;
             bottom: 60px;
@@ -129,323 +194,447 @@
             background: rgba(0, 0, 0, 0.8);
             color: white;
             padding: 8px 12px;
-            border-radius: 16px;
+            border-radius: 20px;
             font-size: 12px;
+            white-space: nowrap;
             opacity: 0;
             transform: translateY(10px);
             transition: all 0.3s ease;
         }
-        .voice-status.active { opacity: 1; transform: translateY(0); }
-        .download-prompt {
-            position: fixed;
-            bottom: 15px;
-            right: 15px;
-            z-index: 999;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            padding: 12px;
-            max-width: 90%;
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.3s ease;
+        .voice-status.active {
+            opacity: 1;
+            transform: translateY(0);
         }
-        .download-prompt.active { transform: translateY(0); opacity: 1; }
-        .volunteer-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.2s ease;
+        .holographic {
+            background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
+            background-size: 200% 200%;
+            animation: hologram 6s ease-in-out infinite;
         }
-        .volunteer-card:hover { transform: translateY(-3px); }
-        @media (min-width: 768px) {
-            .ticker-content { font-size: 14px; }
-            .news-ticker { padding: 10px 0; }
-            .glassmorphism { padding: 1.5rem; }
-            .voice-btn { width: 60px; height: 60px; }
-            .voice-status { font-size: 14px; padding: 10px 15px; }
-            .download-prompt { max-width: 300px; }
-            .btn-primary { padding: 12px; min-height: 44px; }
-            .loading-spinner { width: 20px; height: 20px; border-width: 3px; }
-            .container { max-width: 1200px; }
+        @media (max-width: 768px) {
+            .glassmorphism { padding: 1rem; margin: 0.5rem; }
+            .voice-assistant { bottom: 10px; left: 10px; }
+            .voice-btn { width: 45px; height: 45px; }
+            .modal-content { margin: 1rem; max-height: 90vh; overflow-y: auto; }
+            .impact-counter { font-size: 1.5rem; }
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         @keyframes gradient-shift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        @keyframes wave { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(2deg); } 75% { transform: rotate(-2deg); } }
+        @keyframes bounce-gentle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        @keyframes hologram { 0%, 100% { filter: hue-rotate(0deg); } 50% { filter: hue-rotate(180deg); } }
     </style>
 </head>
-<body>
-    <canvas id="three-canvas" aria-hidden="true"></canvas>
-    <div class="voice-assistant" role="region" aria-label="Voice Assistant">
+<body class="min-h-screen">
+    <!-- 3D Background Canvas -->
+    <canvas id="three-canvas"></canvas>
+
+<!-- Floating Particles -->
+<div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+<div class="particle" style="left: 20%; animation-delay: 1s;"></div>
+<div class="particle" style="left: 30%; animation-delay: 2s;"></div>
+    <div class="particle" style="left: 40%; animation-delay: 3s;"></div>
+    <div class="particle" style="left: 50%; animation-delay: 4s;"></div>
+    <div class="particle" style="left: 60%; animation-delay: 5s;"></div>
+    <div class="particle" style="left: 70%; animation-delay: 6s;"></div>
+    <div class="particle" style="left: 80%; animation-delay: 7s;"></div>
+    <div class="particle" style="left: 90%; animation-delay: 8s;"></div>
+
+    <!-- Voice Assistant -->
+    <div class="voice-assistant">
         <div class="voice-status" id="voice-status">Say "Hey Portal" to start</div>
-        <button class="voice-btn" id="voice-btn" title="Voice Assistant" aria-label="Toggle Voice Assistant">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <button class="voice-btn" id="voice-btn" title="Voice Assistant">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
             </svg>
         </button>
     </div>
-    <div id="download-app-prompt" class="download-prompt">
-        <p class="text-white text-sm mb-2">Download the Lions Gate VIP App!</p>
-        <div class="flex gap-2">
-            <button id="download-app-btn" class="btn-primary flex-1 text-sm py-2">Download</button>
-            <button id="dismiss-app-prompt" class="flex-1 bg-gray-600 text-white text-sm py-2 rounded-lg">Dismiss</button>
-        </div>
-    </div>
+
+    <!-- Loading Screen -->
     <div id="loading-screen" class="fixed inset-0 bg-gradient-to-br from-blue-600 to-purple-800 z-[9999] flex items-center justify-center">
         <div class="text-center text-white">
-            <div class="loading-spinner mb-3"></div>
-            <p class="text-lg font-semibold">Loading...</p>
+            <div class="loading-spinner mb-4 w-16 h-16 border-4 mx-auto"></div>
+            <p class="text-xl font-semibold animate-pulse">Loading VIP Portal...</p>
+            <p class="text-sm opacity-75 mt-2">Initializing your experience</p>
         </div>
     </div>
-    <div id="news-ticker" class="news-ticker" role="marquee" aria-live="polite">
+
+    <!-- News Ticker -->
+    <div id="news-ticker" class="news-ticker">
         <div class="ticker-content" id="ticker-text"></div>
     </div>
-    <div id="main-content" class="opacity-0 transition-opacity duration-300">
-        <div class="container mx-auto px-2 py-4">
-            <div class="flex flex-col sm:flex-row justify-between items-center mb-4">
-                <div class="flex items-center mb-3 sm:mb-0">
-                    <div class="w-10 h-10 mr-2 rounded-full overflow-hidden border-2 border-gold">
-                        <img src="/images/profile.jpg" alt="Joan Luiser" class="w-full h-full object-cover" loading="lazy">
+
+    <div id="main-content" class="opacity-0 transition-opacity duration-500">
+        <div class="container mx-auto px-2 md:px-4 py-4 md:py-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 mr-3 rounded-full overflow-hidden border-2 border-gold animate-glow">
+                        <img src="https://pfst.cf2.poecdn.net/base/image/79a9e1287584e80e373ea1a79482547e0afea7f419240caff0c6e4f86ec4d572?w=1358&h=1428" alt="Joan Luiser" class="w-full h-full object-cover">
                     </div>
                     <div>
-                        <h1 class="text-base font-bold text-white" data-app-value="memberName">Joan Luiser</h1>
+                        <h1 class="text-lg font-bold text-white" data-app-value="memberName">Joan Luiser</h1>
                         <div class="flex items-center space-x-2">
-                            <div class="points-badge text-xs bg-red-500/80 text-white px-2 py-1 rounded">SUSPENDED</div>
+                            <div class="points-badge text-xs bg-red-500/80 text-white animate-pulse px-2 py-1 rounded">SUSPENDED</div>
                             <div class="security-badge bg-green-500/80 text-white text-xs px-2 py-1 rounded">SECURE</div>
                         </div>
                     </div>
                 </div>
-                <button id="contact-support-btn" aria-label="Contact Support" class="p-2 rounded-full bg-white/10 hover:bg-white/20 min-h-[40px] min-w-[40px]">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                </button>
+                <div class="flex items-center space-x-3">
+                    <button id="contact-support-btn" aria-label="Contact Support" class="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center animate-bounce-gentle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </button>
+                </div>
             </div>
-            <nav class="bg-white/5 backdrop-blur-sm border-b border-white/10 mb-4">
-                <div class="flex space-x-2 overflow-x-auto">
-                    <button class="nav-btn py-2 px-3 text-white border-b-2 border-gold text-sm" data-page="dashboard" aria-current="page">🏠 Dashboard</button>
-                    <button class="nav-btn py-2 px-3 text-white border-b-2 border-transparent hover:border-gold text-sm" data-page="security">🔒 Security</button>
-                    <button class="nav-btn py-2 px-3 text-white border-b-2 border-transparent hover:border-gold text-sm" data-page="volunteer">❤️ Volunteer</button>
+
+            <!-- Navigation -->
+            <nav class="bg-white/5 dark:bg-black/10 backdrop-blur-sm border-b border-white/10">
+                <div class="container mx-auto px-4">
+                    <div class="flex space-x-2 md:space-x-6 overflow-x-auto">
+                        <button class="nav-btn py-3 px-3 md:px-4 text-white border-b-2 border-gold transition-all whitespace-nowrap text-sm md:text-base" data-page="dashboard">🏠 Dashboard</button>
+                        <button class="nav-btn py-3 px-3 md:px-4 text-white border-b-2 border-transparent hover:border-gold transition-all whitespace-nowrap text-sm md:text-base" data-page="security">🔒 Security</button>
+                        <button class="nav-btn py-3 px-3 md:px-4 text-white border-b-2 border-transparent hover:border-gold transition-all whitespace-nowrap text-sm md:text-base" data-page="volunteer">❤️ Volunteer</button>
+                    </div>
                 </div>
             </nav>
-            <main id="page-content">
+
+            <!-- Page Content Container -->
+            <main id="page-content" class="container mx-auto px-2 md:px-4 py-4 md:py-6">
+                <!-- Dashboard Page -->
                 <div id="dashboard-page" class="page-content">
-                    <section class="mb-4 glassmorphism rounded-lg p-4 border-2 border-red-500/80">
-                        <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <!-- Reactivation Banner -->
+                    <section class="mb-6 md:mb-8 glassmorphism rounded-2xl p-4 md:p-6 border-2 border-red-500/80 animate-pulse-slow">
+                        <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
                             <div>
-                                <h2 class="text-lg font-bold text-white">⚠️ Account Reactivation Required</h2>
-                                <p class="text-yellow-300 font-semibold">Expires in 6 days!</p>
-                                <p class="text-white/80 text-sm">Contact support to reactivate.</p>
+                                <h2 class="text-xl md:text-2xl font-bold text-white mb-1">⚠️ Account Reactivation Required</h2>
+                                <p class="text-yellow-300 font-semibold text-lg">Your VIP access expires in 6 days!</p>
+                                <p class="text-white/80 mt-1 text-sm md:text-base">Contact support to reactivate your account and restore all VIP benefits.</p>
                             </div>
-                            <button id="reactivate-now-btn" class="btn-primary w-full sm:w-auto px-4 py-2 text-sm">Reactivate Now</button>
+                            <button id="reactivate-now-btn" class="btn-primary bg-blue-600 hover:bg-blue-700 w-full md:w-auto px-6 md:px-8 py-3 rounded-xl text-lg font-semibold flex-shrink-0 animate-glow">Reactivate Now</button>
                         </div>
                     </section>
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                        <div class="lg:col-span-1 space-y-4">
-                            <section id="profile-section" class="glassmorphism rounded-lg p-4 text-center">
-                                <div class="w-20 h-20 mx-auto mb-3 rounded-full overflow-hidden border-2 border-gold">
-                                    <img src="/images/profile.jpg" alt="Joan Luiser" class="w-full h-full object-cover" loading="lazy">
-                                </div>
-                                <h2 class="text-lg font-bold text-white" data-app-value="memberName">Joan Luiser</h2>
-                                <p class="text-white/70 text-sm">Member ID: <span data-app-value="memberId">JL-1408-LG</span></p>
-                                <div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-sm font-bold">🌟 VIP DOUBLE STAR</div>
-                            </section>
-                            <section id="membership-card-section" class="glassmorphism rounded-lg p-4">
-                                <h3 class="text-lg font-bold text-white mb-3 text-center">Digital Membership Card</h3>
-                                <div id="membership-card-downloadable" class="p-2 bg-black/50 rounded-lg">
-                                    <div class="p-3 bg-gradient-to-br from-gray-800 to-black rounded-lg border border-white/10">
-                                        <div class="flex items-center justify-between mb-3">
-                                            <div class="text-lg font-bold text-white"><span class="text-blue-600">LIONS</span><span class="text-gold">GATE</span></div>
-                                            <div class="text-xs text-white/70">VIP DOUBLE STAR</div>
+
+                    <!-- Main Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
+                        <!-- Left Column: Profile & Card -->
+                        <div class="lg:col-span-1 space-y-6 md:space-y-8">
+                            <!-- Profile Section -->
+                            <section id="profile-section" class="glassmorphism rounded-2xl p-4 md:p-6">
+                                <div class="flex flex-col items-center text-center">
+                                    <div class="relative w-24 h-24 md:w-32 md:h-32 mb-4">
+                                        <div class="absolute inset-0 bg-gradient-to-r from-gold via-blue-600 to-gold rounded-full animate-rotate-slow opacity-30"></div>
+                                        <div class="relative w-full h-full rounded-full overflow-hidden border-4 border-gold">
+                                            <img src="https://pfst.cf2.poecdn.net/base/image/79a9e1287584e80e373ea1a79482547e0afea7f419240caff0c6e4f86ec4d572?w=1358&h=1428" alt="Joan Luiser" class="w-full h-full object-cover">
                                         </div>
-                                        <div class="flex items-center space-x-2 mb-3">
-                                            <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-gold">
-                                                <img src="/images/profile.jpg" alt="Joan Luiser" class="w-full h-full object-cover" loading="lazy">
+                                    </div>
+                                    <h2 class="text-xl md:text-2xl font-bold text-white mb-2" data-app-value="memberName">Joan Luiser</h2>
+                                    <p class="text-white/70 mb-3 text-sm md:text-base">Member ID: <span class="font-mono text-gold" data-app-value="memberId">JL-1408-LG</span></p>
+                                    <div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 md:px-4 py-2 rounded-full text-sm font-bold mb-4 animate-glow holographic">🌟 VIP DOUBLE STAR 🌟</div>
+                                    <div class="w-full glassmorphism rounded-xl p-4 grid grid-cols-2 gap-4 text-center">
+                                        <div>
+                                            <div class="text-xl md:text-2xl font-bold text-green-400">0</div>
+                                            <div class="text-white/60 text-xs md:text-sm">Events</div>
+                                        </div>
+                                        <div>
+                                            <div class="text-xl md:text-2xl font-bold text-purple-400">0</div>
+                                            <div class="text-white/60 text-xs md:text-sm">Badges</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <!-- Member Card Section -->
+                            <section id="membership-card-section" class="glassmorphism rounded-2xl p-4 md:p-6">
+                                <h3 class="text-xl md:text-2xl font-bold text-white mb-4 text-center">Digital Membership Card</h3>
+                                <div id="membership-card-downloadable" class="membership-card p-2 bg-black/50 rounded-2xl">
+                                    <div class="p-4 md:p-5 bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-xl relative overflow-hidden border border-white/10">
+                                        <div class="flex items-center justify-between mb-4">
+                                            <div class="text-lg md:text-2xl font-bold text-white"><span class="text-blue-600">LIONS</span><span class="text-gold">GATE</span></div>
+                                            <div class="text-xs text-white/70 text-right"><div class="text-gold font-bold">VIP DOUBLE STAR</div></div>
+                                        </div>
+                                        <div class="flex items-center space-x-3 md:space-x-4 mb-4 md:mb-5">
+                                            <div class="w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-gold flex-shrink-0">
+                                                <img src="https://pfst.cf2.poecdn.net/base/image/79a9e1287584e80e373ea1a79482547e0afea7f419240caff0c6e4f86ec4d572?w=1358&h=1428" alt="Joan Luiser" class="w-full h-full object-cover">
                                             </div>
                                             <div>
-                                                <h3 class="font-bold text-sm text-white" data-app-value="memberName">Joan Luiser</h3>
-                                                <p class="text-xs text-white/70" data-app-value="memberId">JL-1408-LG</p>
+                                                <h3 class="font-bold text-base md:text-lg text-white" data-app-value="memberName">Joan Luiser</h3>
+                                                <p class="text-xs md:text-sm text-white/70 font-mono" data-app-value="memberId">JL-1408-LG</p>
                                             </div>
                                         </div>
-                                        <div class="grid grid-cols-2 gap-2 text-xs mb-3">
-                                            <div><div class="text-white/60">Status</div><div class="text-red-400">SUSPENDED</div></div>
-                                            <div><div class="text-white/60">Member Since</div><div class="text-white">2023</div></div>
+                                        <div class="grid grid-cols-2 gap-4 text-xs md:text-sm mb-4">
+                                            <div><div class="text-white/60">Status</div><div class="font-bold text-red-400">SUSPENDED</div></div>
+                                            <div><div class="text-white/60">Member Since</div><div class="font-bold text-white">2023</div></div>
                                         </div>
-                                        <div class="border-t border-white/20 pt-2 flex justify-between">
+                                        <div class="border-t border-white/20 pt-3 flex justify-between items-center">
                                             <div class="text-xs text-white/60">VIP Portal</div>
-                                            <div id="qr-code-small" class="w-6 h-6 bg-white rounded"></div>
+                                            <div id="qr-code-small" class="w-6 h-6 md:w-8 md:h-8 bg-white rounded p-0.5"></div>
                                         </div>
                                     </div>
                                 </div>
-                                <button id="download-card-btn" class="w-full mt-3 btn-primary py-2 text-sm">Download VIP Card</button>
+                                <button id="download-card-btn" class="w-full mt-4 md:mt-6 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg shimmer-effect text-sm md:text-base btn-primary">Download VIP Card</button>
                             </section>
                         </div>
+
+                        <!-- Right Column: News & Blog -->
                         <div class="lg:col-span-2">
-                            <section id="news-blog-section" class="glassmorphism rounded-lg p-4">
-                                <h3 class="text-lg font-bold text-white mb-3">📰 News & Blog</h3>
-                                <div id="news-blog-container" class="space-y-3 max-h-[600px] overflow-y-auto">
-                                    <div class="bg-white/5 rounded-lg p-3 border border-white/10">
-                                        <div class="flex justify-between mb-2">
-                                            <span class="text-gold font-bold text-xs">Lionsgate Insider</span>
+                            <section id="news-blog-section" class="glassmorphism rounded-2xl p-4 md:p-6 h-full">
+                                <h3 class="text-xl md:text-2xl font-bold text-white mb-4">📰 News & Blog</h3>
+                                <div id="news-blog-container" class="space-y-4 max-h-[800px] md:max-h-[1200px] overflow-y-auto pr-2">
+                                    <div class="bg-white/5 rounded-lg p-3 md:p-4 border border-white/10 hover:bg-white/10 transition-all animate-fade-in">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <span class="text-gold font-bold text-xs md:text-sm">Lionsgate Insider</span>
                                             <span class="text-white/60 text-xs">August 6, 2025</span>
                                         </div>
-                                        <h4 class="text-base font-semibold text-white mb-1">Keanu Reeves' 2025 World Tour</h4>
-                                        <p class="text-white/90 text-sm">Keanu kicks off his global tour on August 10, 2025, with exclusive fan meet-and-greets.</p>
+                                        <h4 class="text-lg md:text-xl font-semibold text-white mb-2">Keanu Reeves Announces 2025 World Tour</h4>
+                                        <p class="text-white/90 text-sm md:text-base leading-relaxed">Keanu Reeves is hitting the road for a global tour starting August 10, 2025, promising an unforgettable experience for fans. Expect exclusive performances and behind-the-scenes insights into his iconic career.</p>
                                     </div>
-                                    <div class="bg-white/5 rounded-lg p-3 border border-white/10">
-                                        <div class="flex justify-between mb-2">
-                                            <span class="text-gold font-bold text-xs">Music Weekly</span>
+                                    <div class="bg-white/5 rounded-lg p-3 md:p-4 border border-white/10 hover:bg-white/10 transition-all animate-fade-in">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <span class="text-gold font-bold text-xs md:text-sm">Music Weekly</span>
                                             <span class="text-white/60 text-xs">August 6, 2025</span>
                                         </div>
-                                        <h4 class="text-base font-semibold text-white mb-1">New Album 'Echoes in the Static'</h4>
-                                        <p class="text-white/90 text-sm">Keanu’s album, featuring 'Joan,' releases alongside his tour.</p>
+                                        <h4 class="text-lg md:text-xl font-semibold text-white mb-2">New Album 'Echoes in the Static' Headlined by 'Joan'</h4>
+                                        <p class="text-white/90 text-sm md:text-base leading-relaxed">Keanu Reeves' upcoming album, <em>Echoes in the Static</em>, features the heartfelt track 'Joan,' dedicated to the love of his life. Other tracks include 'Sunset on the 405,' 'Static Bloom,' 'Midnight Motorcycle,' and 'Just a Whisper Away,' set to release alongside his 2025 tour.</p>
                                     </div>
-                                    <div class="bg-white/5 rounded-lg p-3 border border-white/10">
-                                        <div class="flex justify-between mb-2">
-                                            <span class="text-gold font-bold text-xs">Variety</span>
+                                    <div class="bg-white/5 rounded-lg p-3 md:p-4 border border-white/10 hover:bg-white/10 transition-all animate-fade-in">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <span class="text-gold font-bold text-xs md:text-sm">Variety</span>
                                             <span class="text-white/60 text-xs">August 6, 2025</span>
                                         </div>
-                                        <h4 class="text-base font-semibold text-white mb-1">Keanu’s Charitable Impact</h4>
-                                        <p class="text-white/90 text-sm">Keanu’s foundation supports 45+ orphanages and raises $2.8M for cancer research.</p>
+                                        <h4 class="text-lg md:text-xl font-semibold text-white mb-2">Keanu Reeves' Charitable Impact Continues</h4>
+                                        <p class="text-white/90 text-sm md:text-base leading-relaxed">Keanu Reeves remains a beacon of philanthropy, with his foundation supporting over 45 orphanages and raising $2.8M for cancer research. His commitment to giving back inspires fans worldwide.</p>
                                     </div>
                                 </div>
                             </section>
                         </div>
                     </div>
                 </div>
+
+    <!-- News Section -->
+    <div id="news-section" class="news-ticker">
+        <h3 class="text-xl md:text-2xl font-bold text-white mb-4">📰 Headlines</h3>
+        <ul class="list-disc pl-6">
+            <li class="text-white/90 text-sm mb-2">Keanu Reeves Announces New Tour: "Echoes in the Static" Kicks Off August 10, 2025</li>
+            <li class="text-white/90 text-sm mb-2">"Joan" - A Tribute to Love: Keanu's Special Song for His Life Partner</li>
+            <li class="text-white/90 text-sm mb-2">Top Tracks from "Echoes in the Static": Sunset on the 405, Static Bloom, Midnight Motorcycle</li>
+            <li class="text-white/90 text-sm mb-2">"Just a Whisper Away" Captures the Essence of Keanu's New Album</li>
+        </ul>
+                <!-- Security Page -->
                 <div id="security-page" class="page-content hidden">
-                    <h2 class="text-lg font-bold text-white mb-3">🔒 Security Center</h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="glassmorphism rounded-lg p-4">
-                            <h4 class="text-base font-bold text-white mb-2">Fraud Protection</h4>
-                            <p class="text-white/80 text-sm">AI monitoring to keep your account secure.</p>
+                    <div class="mb-6 md:mb-8">
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">🔒 Security Center</h2>
+                        <p class="text-white/70 text-sm md:text-base">Advanced protection for your VIP account and community safety</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                        <div class="glassmorphism rounded-xl p-4 md:p-6">
+                            <h4 class="text-lg font-bold text-white mb-2">Fraud Protection</h4>
+                            <p class="text-white/80 text-sm mb-3">AI monitoring detects and prevents unauthorized activities. Reactivate your account to ensure full protection.</p>
+                            <div class="text-green-400/70 text-sm">✓ Real-time Monitoring<br/>✓ Identity Verification</div>
                         </div>
-                        <div class="glassmorphism rounded-lg p-4">
-                            <h4 class="text-base font-bold text-white mb-2">Report Activity</h4>
-                            <button id="report-fraud-btn" class="w-full btn-primary py-2 text-sm">Report Now</button>
+                        <div class="glassmorphism rounded-xl p-4 md:p-6">
+                            <h4 class="text-lg font-bold text-white mb-2">Report Suspicious Activity</h4>
+                            <p class="text-white/80 text-sm mb-3">See something suspicious? Help keep our community safe by reporting it to our team.</p>
+                            <button id="report-fraud-btn" class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold py-2 px-4 rounded-lg min-h-[44px]">Report Now</button>
                         </div>
                     </div>
                 </div>
+
+                <!-- Volunteer Hub Page -->
                 <div id="volunteer-page" class="page-content hidden">
-                    <h2 class="text-lg font-bold text-white mb-3 text-center">❤️ Volunteer Hub</h2>
-                    <section class="mb-4">
-                        <div class="glassmorphism rounded-lg p-4">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    <div class="mb-6 md:mb-8 text-center">
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">❤️ Volunteer Hub</h2>
+                        <p class="text-white/70 text-sm md:text-base">Join Keanu Reeves in making a difference through charitable initiatives</p>
+                    </div>
+                    <!-- Impact Stats -->
+                    <section class="mb-8 md:mb-12">
+                        <div class="glassmorphism rounded-xl p-6 md:p-8">
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
                                 <div>
-                                    <div class="text-2xl font-bold text-gold">45+</div>
+                                    <div class="impact-counter text-gold">45+</div>
                                     <p class="text-sm text-white/60">Orphanages Supported</p>
                                 </div>
                                 <div>
-                                    <div class="text-2xl font-bold text-gold">$2.8M</div>
-                                    <p class="text-sm text-white/60">Cancer Research</p>
+                                    <div class="impact-counter text-gold">$2.8M</div>
+                                    <p class="text-sm text-white/60">Cancer Research Funding</p>
                                 </div>
                                 <div>
-                                    <div class="text-2xl font-bold text-gold">12,500+</div>
+                                    <div class="impact-counter text-gold">12,500+</div>
                                     <p class="text-sm text-white/60">Children Helped</p>
                                 </div>
                                 <div>
-                                    <div class="text-2xl font-bold text-gold">892</div>
+                                    <div class="impact-counter text-gold">892</div>
                                     <p class="text-sm text-white/60">Lives Saved</p>
                                 </div>
                             </div>
                         </div>
                     </section>
-                    <section class="mb-4">
-                        <h3 class="text-base font-bold text-white mb-3 text-center">🔬 Cancer Research Initiatives</h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="volunteer-card rounded-lg p-3 border border-white/10">
-                                <div class="flex justify-between mb-2">
-                                    <span class="text-gold font-bold text-xs">Global Health</span>
-                                    <span class="text-white/60 text-xs">August 6, 2025</span>
-                                </div>
-                                <h4 class="text-base font-semibold text-white mb-1">Pediatric Cancer Breakthroughs</h4>
-                                <p class="text-white/90 text-sm">Join Keanu Reeves in funding cutting-edge leukemia research, saving young lives through innovative treatments.</p>
-                                <button id="donate-cancer-btn" class="w-full mt-2 btn-primary py-2 text-sm">Support Now</button>
+                    <!-- Cancer Research Initiatives -->
+                    <section class="mb-8 md:mb-12">
+                        <h3 class="text-2xl font-bold text-white mb-6 text-center">🔬 Cancer Research Initiatives</h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="volunteer-card rounded-xl p-6 relative">
+                                <img src="https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?w=500&h=300&fit=crop" alt="Pediatric Cancer Research" class="w-full h-48 object-cover rounded-lg mb-4">
+                                <h4 class="text-xl font-bold text-white mb-2">👶 Pediatric Cancer Research</h4>
+                                <p class="text-white/80 text-sm mb-4">Groundbreaking research focused on childhood leukemia and brain tumors. Every donation directly funds clinical trials that save young lives.</p>
+                                <button id="donate-cancer-btn" class="w-full bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105">Support Research</button>
                             </div>
-                            <div class="volunteer-card rounded-lg p-3 border border-white/10">
-                                <div class="flex justify-between mb-2">
-                                    <span class="text-gold font-bold text-xs">Medical Innovator</span>
-                                    <span class="text-white/60 text-xs">August 6, 2025</span>
-                                </div>
-                                <h4 class="text-base font-semibold text-white mb-1">Breast Cancer Detection</h4>
-                                <p class="text-white/90 text-sm">Support early detection tech for breast cancer, backed by Keanu’s foundation, to improve survival rates.</p>
-                                <button id="donate-breast-cancer-btn" class="w-full mt-2 btn-primary py-2 text-sm">Join Initiative</button>
+                            <div class="volunteer-card rounded-xl p-6">
+                                <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=500&h=300&fit=crop" alt="Breast Cancer Research" class="w-full h-48 object-cover rounded-lg mb-4">
+                                <h4 class="text-xl font-bold text-white mb-2">🎗️ Breast Cancer Innovation Lab</h4>
+                                <p class="text-white/80 text-sm mb-4">Advanced research into early detection methods and personalized treatment approaches for breast cancer patients worldwide.</p>
+                                <button id="donate-breast-cancer-btn" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105">Support Innovation</button>
                             </div>
                         </div>
                     </section>
-                    <section>
-                        <h3 class="text-base font-bold text-white mb-3 text-center">🏠 Orphanage Support Programs</h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="volunteer-card rounded-lg p-3 border border-white/10">
-                                <div class="flex justify-between mb-2">
-                                    <span class="text-gold font-bold text-xs">Hope Rising</span>
-                                    <span class="text-white/60 text-xs">August 6, 2025</span>
-                                </div>
-                                <h4 class="text-base font-semibold text-white mb-1">Sunshine Children’s Home</h4>
-                                <p class="text-white/90 text-sm">Volunteer in Kenya to provide educational resources for 150 children, inspired by Keanu’s mission.</p>
-                                <button id="volunteer-orphanage-btn" class="w-full mt-2 btn-primary py-2 text-sm">Get Involved</button>
+                    <!-- Orphanage Support Programs -->
+                    <section class="mb-8 md:mb-12">
+                        <h3 class="text-2xl font-bold text-white mb-6 text-center">🏠 Orphanage Support Programs</h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="volunteer-card rounded-xl p-6 relative">
+                                <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=500&h=300&fit=crop" alt="Sunshine Children's Home" class="w-full h-48 object-cover rounded-lg mb-4">
+                                <h4 class="text-xl font-bold text-white mb-2">🌟 Sunshine Children's Home (Kenya)</h4>
+                                <p class="text-white/80 text-sm mb-4">This home for 150 children needs educational supplies, nutritious meals, and recreational activities. Your help brings them joy and a future.</p>
+                                <button id="volunteer-orphanage-btn" class="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105">Join This Program</button>
                             </div>
-                            <div class="volunteer-card rounded-lg p-3 border border-white/10">
-                                <div class="flex justify-between mb-2">
-                                    <span class="text-gold font-bold text-xs">Future Stars</span>
-                                    <span class="text-white/60 text-xs">August 6, 2025</span>
-                                </div>
-                                <h4 class="text-base font-semibold text-white mb-1">Hope Valley Orphanage</h4>
-                                <p class="text-white/90 text-sm">Support 85 children in Uganda with healthcare and vocational training for a brighter future.</p>
-                                <button id="support-hope-valley-btn" class="w-full mt-2 btn-primary py-2 text-sm">Contribute Now</button>
+                            <div class="volunteer-card rounded-xl p-6">
+                                <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=500&h=300&fit=crop" alt="Hope Valley Orphanage" class="w-full h-48 object-cover rounded-lg mb-4">
+                                <h4 class="text-xl font-bold text-white mb-2">🏡 Hope Valley Orphanage (Uganda)</h4>
+                                <p class="text-white/80 text-sm mb-4">A sanctuary for 85 children focusing on healthcare, education, and vocational training. Support their journey to self-sufficiency.</p>
+                                <button id="support-hope-valley-btn" class="w-full bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105">Support Hope Valley</button>
                             </div>
                         </div>
                     </section>
                 </div>
             </main>
         </div>
-        <div id="upgrade-modal" class="modal" role="dialog" aria-modal="true">
+
+        <!-- Modals -->
+        <div id="upgrade-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="upgrade-modal-title">
             <div class="absolute inset-0 bg-black/60" data-close-modal></div>
             <div class="flex items-center justify-center min-h-screen p-4">
-                <div class="modal-content glassmorphism rounded-lg max-w-md w-full">
-                    <div class="p-4 text-center">
-                        <h3 class="text-lg font-bold text-white">Welcome to the VIP Portal!</h3>
-                        <p class="text-white/80 text-sm mt-2">Explore your exclusive benefits, Joan Luiser.</p>
-                        <button data-close-modal class="w-full mt-3 btn-primary py-2 text-sm">Get Started</button>
+                <div class="modal-content glassmorphism rounded-2xl shadow-2xl max-w-lg w-full mx-auto z-10 border-2 border-gold/50">
+                    <div class="p-6 md:p-8 relative text-center">
+                        <div class="text-4xl md:text-6xl mb-4 animate-bounce-gentle">🚀</div>
+                        <h3 id="upgrade-modal-title" class="text-xl md:text-2xl font-bold text-white">The VIP Portal Has Leveled Up!</h3>
+                        <p class="text-white/80 text-sm md:text-base mt-2 mb-6">
+                            Welcome to the new and improved Lions Gate VIP experience, <span class="font-bold" data-app-value="memberName"></span>.
+                        </p>
+                        <div class="space-y-4 text-left bg-white/5 rounded-xl p-4 mb-6">
+                            <div class="flex items-start space-x-3">
+                                <div class="text-gold text-xl mt-1">✓</div>
+                                <div>
+                                    <h4 class="font-semibold text-white">Your Digital ID Card</h4>
+                                    <p class="text-sm text-white/70">Download your official, secure VIP membership card directly from your dashboard.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="text-gold text-xl mt-1">✓</div>
+                                <div>
+                                    <h4 class="font-semibold text-white">Enhanced Security</h4>
+                                    <p class="text-sm text-white/70">Your account is now protected by our latest security protocols and real-time monitoring.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="text-gold text-xl mt-1">✓</div>
+                                <div>
+                                    <h4 class="font-semibold text-white">Voice Assistant</h4>
+                                    <p class="text-sm text-white/70">Use voice commands to navigate the portal and get instant support.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="text-gold text-xl mt-1">✓</div>
+                                <div>
+                                    <h4 class="font-semibold text-white">Volunteer Hub</h4>
+                                    <p class="text-sm text-white/70">Join Keanu's charitable initiatives and make a real difference in the world.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button data-close-modal class="w-full btn-primary py-3 px-6 rounded-xl text-lg font-semibold bg-gold hover:bg-gold-dark shimmer-effect">Explore the New Portal</button>
                     </div>
                 </div>
             </div>
         </div>
-        <div id="toast-container" class="fixed top-16 right-4 z-[9999] space-y-2 max-w-xs"></div>
-    </div>
+
+        <div id="account-status-modal" class="modal" role="dialog" aria-modal="true">
+            <div class="absolute inset-0 bg-black/60" data-close-modal></div>
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="modal-content glassmorphism rounded-2xl shadow-2xl max-w-lg w-full mx-auto z-10 border-2 border-red-500/80">
+                    <div class="p-6 md:p-8 relative">
+                        <div class="text-center mb-6">
+                            <div class="text-4xl md:text-6xl mb-4 animate-pulse">⚠️</div>
+                            <h3 class="text-xl md:text-2xl font-bold text-white">Account Status Alert</h3>
+                        </div>
+                        <div class="bg-red-500/10 border border-red-500/50 rounded-xl p-4 mb-6">
+                            <div class="flex items-start space-x-3">
+                                <div class="text-red-400 text-lg mt-1">🚨</div>
+                                <div>
+                                    <h4 class="font-semibold text-white">VIP Access Suspended</h4>
+                                    <p class="text-red-200 text-sm mt-1">Your account requires immediate reactivation to restore full VIP benefits including:</p>
+                                    <ul class="text-red-200 text-sm mt-2 space-y-1">
+                                        <li>• Exclusive movie screenings & event access</li>
+                                        <li>• Premium customer support</li>
+                                        <li>• Special merchandise offers</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <button id="reactivate-from-modal" class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 px-6 rounded-xl shimmer-effect min-h-[44px]">Reactivate Now</button>
+                            <button data-close-modal class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-xl min-h-[44px]">Later</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div id="toast-container" class="fixed top-20 right-4 z-[9999] space-y-2 max-w-sm"></div>
+</div>
+
     <script>
-        // Optimized Three.js Animation
+        // Three.js 3D Background Animation
         function init3DBackground() {
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
             const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas'), alpha: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(1); // Optimize for mobile
+
             const particles = new THREE.Group();
-            const geometry = new THREE.SphereGeometry(0.08, 8, 8);
-            const material = new THREE.MeshBasicMaterial({ color: 0xffd700, transparent: true, opacity: 0.5 });
-            for (let i = 0; i < 50; i++) {
+            const geometry = new THREE.SphereGeometry(0.1, 16, 16);
+            const material = new THREE.MeshBasicMaterial({ color: 0xffd700, transparent: true, opacity: 0.6 });
+
+            for (let i = 0; i < 200; i++) {
                 const particle = new THREE.Mesh(geometry, material);
-                particle.position.set((Math.random() - 0.5) * 60, (Math.random() - 0.5) * 60, (Math.random() - 0.5) * 60);
-                particle.userData = { velocity: new THREE.Vector3((Math.random() - 0.5) * 0.03, (Math.random() - 0.5) * 0.03, (Math.random() - 0.5) * 0.03) };
+                particle.position.set(
+                    (Math.random() - 0.5) * 100,
+                    (Math.random() - 0.5) * 100,
+                    (Math.random() - 0.5) * 100
+                );
+                particle.userData = { velocity: new THREE.Vector3((Math.random() - 0.5) * 0.1, (Math.random() - 0.5) * 0.1, (Math.random() - 0.5) * 0.1) };
                 particles.add(particle);
             }
             scene.add(particles);
-            camera.position.z = 30;
+            camera.position.z = 50;
+
             function animate() {
                 requestAnimationFrame(animate);
                 particles.children.forEach(p => {
                     p.position.add(p.userData.velocity);
-                    if (p.position.distanceTo(new THREE.Vector3(0, 0, 0)) > 30) {
-                        p.position.set((Math.random() - 0.5) * 60, (Math.random() - 0.5) * 60, (Math.random() - 0.5) * 60);
+                    if (p.position.distanceTo(new THREE.Vector3(0, 0, 0)) > 50) {
+                        p.position.set(
+                            (Math.random() - 0.5) * 100,
+                            (Math.random() - 0.5) * 100,
+                            (Math.random() - 0.5) * 100
+                        );
                     }
                 });
-                particles.rotation.y += 0.001;
+                particles.rotation.y += 0.002;
                 renderer.render(scene, camera);
             }
             animate();
+
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
@@ -466,38 +655,67 @@
                     'dashboard': () => this.navigateTo('dashboard'),
                     'security': () => this.navigateTo('security'),
                     'volunteer': () => this.navigateTo('volunteer'),
-                    'help': () => this.speak('Commands: dashboard, security, volunteer, help'),
-                    'reactivate': () => document.getElementById('reactivate-now-btn')?.click(),
-                    'contact support': () => document.getElementById('contact-support-btn')?.click()
+                    'help': () => this.showHelp(),
+                    'reactivate': () => this.reactivateAccount(),
+                    'contact support': () => this.contactSupport()
                 };
             }
+
             get(key) { return this.data[key]; }
-            set(key, value) {
-                this.data[key] = value;
-                document.querySelectorAll(`[data-app-value="${key}"]`).forEach(el => el.textContent = value);
+            set(key, value) { this.data[key] = value; this.updateUI(); }
+
+            updateUI() {
+                document.querySelectorAll('[data-app-value]').forEach(el => {
+                    const key = el.getAttribute('data-app-value');
+                    if (this.data[key]) el.textContent = this.data[key];
+                });
             }
+
             navigateTo(page) {
-                document.querySelector(`.nav-btn[data-page="${page}"]`)?.click();
+                const btn = document.querySelector(`.nav-btn[data-page="${page}"]`);
+                if (btn) btn.click();
                 this.speak(`Navigating to ${page}`);
             }
+
+            showHelp() { this.speak('Available commands: dashboard, security, volunteer, help, reactivate, contact support'); }
+
+            reactivateAccount() {
+                document.getElementById('reactivate-now-btn')?.click();
+                this.speak('Opening account reactivation request');
+            }
+
+            contactSupport() {
+                document.getElementById('contact-support-btn')?.click();
+                this.speak('Opening support contact form');
+            }
+
             speak(text) {
                 if ('speechSynthesis' in window && speech_enabled) {
                     const utterance = new SpeechSynthesisUtterance(text);
                     utterance.rate = 0.9;
+                    utterance.pitch = 1.1;
                     speechSynthesis.speak(utterance);
                 }
             }
-            createMailtoLink(subject, body, recipient = 'erwinstoff0766@gmail.com') {
-                const memberInfo = `\n\nMember: ${this.get('memberName')}\nID: ${this.get('memberId')}`;
-                window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body + memberInfo)}`;
+
+            createMailtoLink(subject, body, recipient = 'support@lionsgatevip.com') {
+                const memberInfo = `\n\n---\nMember Name: ${this.get('memberName')}\nMember ID: ${this.get('memberId')}`;
+                const fullBody = encodeURIComponent(body + memberInfo);
+                const fullSubject = encodeURIComponent(subject);
+                window.location.href = `mailto:${recipient}?subject=${fullSubject}&body=${fullBody}`;
             }
+
             showModal(modalId) {
                 const modal = document.getElementById(modalId);
-                modal?.classList.add('active');
-                modal?.querySelector('button')?.focus();
+                if (!modal) return;
+                modal.classList.add('active');
+                modal.querySelector('[data-close-modal], button')?.focus();
             }
+
             hideModal(modalId) {
-                document.getElementById(modalId)?.classList.remove('active');
+                const modal = document.getElementById(modalId);
+                if (!modal) return;
+                modal.classList.remove('active');
             }
         }
 
@@ -508,51 +726,57 @@
                 this.recognition = null;
                 this.init();
             }
+
             init() {
                 try {
                     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                    if (!SpeechRecognition) return;
+                    if (!SpeechRecognition) {
+                        this.updateUI('Voice not supported');
+                        return;
+                    }
                     this.recognition = new SpeechRecognition();
                     this.recognition.continuous = false;
+                    this.recognition.interimResults = false;
                     this.recognition.lang = 'en-US';
-                    this.recognition.onstart = () => {
-                        this.isListening = true;
-                        this.updateUI('Listening...');
-                    };
+
+                    this.recognition.onstart = () => { this.isListening = true; this.updateUI('Listening...'); };
                     this.recognition.onresult = (event) => this.processCommand(event.results[0][0].transcript.toLowerCase());
-                    this.recognition.onend = () => {
-                        this.isListening = false;
-                        this.updateUI('Say "Hey Portal"');
-                    };
+                    this.recognition.onerror = (e) => { this.isListening = false; if (e.error !== 'no-speech') this.updateUI('Voice error. Try again.'); };
+                    this.recognition.onend = () => { this.isListening = false; this.updateUI('Say "Hey Portal"'); };
+
                     document.getElementById('voice-btn')?.addEventListener('click', () => {
                         this.isListening ? this.recognition.stop() : this.recognition.start();
                     });
-                    if (speech_enabled) {
-                        this.appState.speak('Welcome to the Lions Gate VIP Portal! Navigate with voice commands or download your VIP card.');
-                    }
                 } catch (e) {
-                    console.error('Voice init error:', e);
+                    console.error("Voice recognition failed to initialize:", e);
+                    this.updateUI('Voice init failed');
                 }
             }
+
             processCommand(transcript) {
                 this.updateUI(`Heard: "${transcript}"`);
+                const command = Object.keys(this.appState.voiceCommands).find(cmd => transcript.includes(cmd));
+
                 if (transcript.includes('hey portal')) {
-                    this.appState.speak('Hello! How can I assist you?');
+                    this.appState.speak('Hello Joan! How can I help you today?');
+                } else if (command) {
+                    this.appState.voiceCommands[command]();
                 } else {
-                    const command = Object.keys(this.appState.voiceCommands).find(cmd => transcript.includes(cmd));
-                    if (command) this.appState.voiceCommands[command]();
-                    else this.appState.speak('Try saying "help" for commands.');
+                    this.appState.speak('Sorry, I didn\'t understand. Say "help" for commands.');
                 }
             }
+
             updateUI(message) {
                 const status = document.getElementById('voice-status');
                 const btn = document.getElementById('voice-btn');
                 if (status) {
                     status.textContent = message;
                     status.classList.add('active');
-                    setTimeout(() => status.classList.remove('active'), 2000);
+                    setTimeout(() => status.classList.remove('active'), 3000);
                 }
-                btn?.classList.toggle('listening', this.isListening);
+                if (btn) {
+                    this.isListening ? btn.classList.add('listening') : btn.classList.remove('listening');
+                }
             }
         }
 
@@ -563,125 +787,125 @@
         const tickerManager = {
             messages: [
                 "🎬 Welcome to Lions Gate VIP Portal!",
-                "🚀 John Wick 5 - among top movies in 2025!",
-                "🌟 'Ballerina 2' screening - november 2025",
-                "🎭 Keanu Q&A - aug 19, 2025",
-                "🎯 Support Keanu’s charities",
-                "💎 Reactivate your account!"
+                "🚀 John Wick: Chapter 5 - Coming March 2025!",
+                "🌟 Exclusive 'Ballerina' screening this February",
+                "🎭 Keanu Reeves Live Q&A - Feb 15th, 2025",
+                "🎯 Support Keanu's cancer research",
+                "💎 Your account expires in 6 days - Reactivate now!"
             ],
             init() {
+                this.updateTicker();
+            },
+            updateTicker() {
                 const tickerElement = document.getElementById('ticker-text');
-                if (tickerElement) {
-                    tickerElement.innerHTML = this.messages.map(msg => `&nbsp;&nbsp;${msg}`).join('');
-                }
+                if (!tickerElement) return;
+                const shuffled = [...this.messages].sort(() => 0.5 - Math.random());
+                tickerElement.innerHTML = shuffled.map(msg => `&nbsp;&nbsp;&nbsp;&nbsp;${msg}`).join('');
             }
         };
 
-        function showToast(message, type = 'info') {
+        function showToast(message, type = 'info', duration = 5000) {
             const toastContainer = document.getElementById('toast-container');
+            if (!toastContainer) return;
             const toast = document.createElement('div');
-            toast.className = `bg-${type === 'success' ? 'green' : 'red'}-500 text-white px-3 py-2 rounded-lg`;
-            toast.textContent = message;
+            const typeClasses = { success: 'bg-green-500', error: 'bg-red-500', info: 'bg-blue-500' };
+            toast.className = `${typeClasses[type]} text-white px-4 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 max-w-xs`;
+            toast.innerHTML = `<div class="flex items-center justify-between"><p class="text-sm">${message}</p><button class="ml-3 text-white hover:text-gray-200" onclick="this.parentElement.parentElement.remove()">X</button></div>`;
             toastContainer.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
-
-        function showAppDownloadPrompt() {
-            if (localStorage.getItem('appDownloadDismissed')) return;
-            const prompt = document.getElementById('download-app-prompt');
-            if (prompt) {
-                setTimeout(() => {
-                    prompt.classList.add('active');
-                    setTimeout(() => prompt.classList.remove('active'), 10000);
-                }, 1000);
-                document.getElementById('download-app-btn')?.addEventListener('click', () => {
-                    localStorage.setItem('appDownloadDismissed', 'true');
-                    window.location.href = 'https://lionsgatevip.com/app';
-                    prompt.classList.remove('active');
-                });
-                document.getElementById('dismiss-app-prompt')?.addEventListener('click', () => {
-                    localStorage.setItem('appDownloadDismissed', 'true');
-                    prompt.classList.remove('active');
-                });
-            }
+            setTimeout(() => toast.classList.remove('translate-x-full'), 100);
+            setTimeout(() => { toast.classList.add('translate-x-full'); setTimeout(() => toast.remove(), 300); }, duration);
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             init3DBackground();
             appState.updateUI();
             tickerManager.init();
-            showAppDownloadPrompt();
 
+            // Navigation
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    document.querySelectorAll('.nav-btn').forEach(b => {
-                        b.classList.replace('border-gold', 'border-transparent');
-                        b.removeAttribute('aria-current');
-                    });
+                    document.querySelectorAll('.nav-btn').forEach(b => b.classList.replace('border-gold', 'border-transparent'));
                     btn.classList.replace('border-transparent', 'border-gold');
-                    btn.setAttribute('aria-current', 'page');
                     document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
                     document.getElementById(btn.dataset.page + '-page')?.classList.remove('hidden');
                 });
             });
 
+            // Button Actions
             const actions = {
-                'reactivate-now-btn': () => appState.createMailtoLink('Account Reactivation', 'Please reactivate my VIP account.'),
-                'contact-support-btn': () => appState.createMailtoLink('Support Inquiry', 'I need assistance with my account.'),
-                'report-fraud-btn': () => appState.createMailtoLink('Report Suspicious Activity', 'I want to report an issue.'),
-                'donate-cancer-btn': () => appState.createMailtoLink('Cancer Research Donation', 'I want to support pediatric cancer research.'),
-                'donate-breast-cancer-btn': () => appState.createMailtoLink('Breast Cancer Donation', 'I want to support breast cancer initiatives.'),
-                'volunteer-orphanage-btn': () => appState.createMailtoLink('Volunteer in Kenya', 'I’m interested in volunteering for Sunshine Children’s Home.'),
-                'support-hope-valley-btn': () => appState.createMailtoLink('Support Hope Valley', 'How can I help Hope Valley Orphanage?')
+                'reactivate-now-btn': () => appState.createMailtoLink('URGENT: VIP Account Reactivation', 'Please reactivate my VIP account immediately.'),
+                'contact-support-btn': () => appState.createMailtoLink('VIP Portal Support Inquiry', 'I have a question about my VIP account.'),
+                'report-fraud-btn': () => appState.createMailtoLink('SECURITY ALERT: Report', 'I would like to report suspicious activity.'),
+                'donate-cancer-btn': () => appState.createMailtoLink('Support Pediatric Cancer Research', 'I would like to donate to this cause.'),
+                'donate-breast-cancer-btn': () => appState.createMailtoLink('Support Breast Cancer Innovation', 'Please send me information on how to donate.'),
+                'volunteer-orphanage-btn': () => appState.createMailtoLink('Volunteer for Sunshine Children\'s Home', 'I am interested in volunteering.'),
+                'support-hope-valley-btn': () => appState.createMailtoLink('Support Hope Valley Orphanage', 'How can I support Hope Valley?'),
+                'reactivate-from-modal': () => { appState.hideModal('account-status-modal'); appState.createMailtoLink('URGENT: Reactivation Request from Modal', 'Please reactivate my account.'); },
             };
             Object.keys(actions).forEach(id => document.getElementById(id)?.addEventListener('click', actions[id]));
 
-            document.getElementById('download-card-btn')?.addEventListener('click', async (e) => {
+            // VIP Card Download
+            document.getElementById('download-card-btn')?.addEventListener('click', (e) => {
                 const button = e.currentTarget;
                 const originalHTML = button.innerHTML;
-                button.innerHTML = '<div class="loading-spinner mr-2"></div>Generating...';
+                button.innerHTML = '<div class="loading-spinner"></div><span class="ml-2">Generating...</span>';
                 button.disabled = true;
-                try {
-                    const canvas = await html2canvas(document.getElementById('membership-card-downloadable'), { scale: 2 });
+                const cardElement = document.getElementById('membership-card-downloadable');
+                if (!cardElement) return;
+
+                html2canvas(cardElement, { backgroundColor: null, scale: 3, useCORS: true }).then(canvas => {
                     const link = document.createElement('a');
-                    link.download = `VIP_Card_${appState.get('memberId')}.png`;
+                    link.download = `LionsGate_VIP_Card_${appState.get('memberId')}.png`;
                     link.href = canvas.toDataURL('image/png');
                     link.click();
-                    showToast('Card downloaded!', 'success');
-                } catch (err) {
-                    showToast('Download failed.', 'error');
-                } finally {
+                    showToast('VIP Card downloaded!', 'success');
+                }).catch(err => {
+                    console.error('html2canvas error:', err);
+                    showToast('Download failed. Please try again.', 'error');
+                }).finally(() => {
                     button.innerHTML = originalHTML;
                     button.disabled = false;
-                }
+                });
             });
 
+            // QR Code
             const qrContainer = document.getElementById('qr-code-small');
-            if (qrContainer && QRCode) {
+            if (qrContainer && typeof QRCode !== 'undefined') {
                 QRCode.toDataURL(`VIP_ID:${appState.get('memberId')}`, { width: 48, margin: 1 }, (err, url) => {
-                    if (!err) qrContainer.innerHTML = `<img src="${url}" alt="QR Code" loading="lazy">`;
+                    if (err) console.error(err);
+                    else qrContainer.innerHTML = `<img src="${url}" alt="QR Code">`;
                 });
             }
 
+            // Modals
             document.querySelectorAll('[data-close-modal]').forEach(el => {
                 el.addEventListener('click', () => appState.hideModal(el.closest('.modal').id));
             });
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') document.querySelectorAll('.modal.active').forEach(m => appState.hideModal(m.id));
+                if (e.key === 'Escape') document.querySelectorAll('.modal.active').forEach(modal => appState.hideModal(modal.id));
             });
 
+            // Loading Sequence
             const loadingScreen = document.getElementById('loading-screen');
             if (loadingScreen) {
                 setTimeout(() => {
                     loadingScreen.style.opacity = '0';
-                    document.getElementById('main-content').style.opacity = '1';
+                    document.getElementById('main-content')?.style.setProperty('opacity', '1');
                     setTimeout(() => {
                         loadingScreen.remove();
                         appState.showModal('upgrade-modal');
-                    }, 300);
-                }, 800);
+                    }, 500);
+                }, 1500);
             }
+
+            // Trigger alert modal on interaction
+            let interactionCount = 0;
+            document.addEventListener('click', () => {
+                interactionCount++;
+                if (interactionCount === 5) appState.showModal('account-status-modal');
+            }, { once: true });
         });
     </script>
 </body>
+</html>
 </html>
